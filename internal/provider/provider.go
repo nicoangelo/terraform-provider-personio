@@ -2,8 +2,9 @@ package provider
 
 import (
 	"context"
-	"net/http"
+	"os"
 
+	personio "github.com/giantswarm/personio-go/v1"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
@@ -11,40 +12,56 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// Ensure ScaffoldingProvider satisfies various provider interfaces.
-var _ provider.Provider = &ScaffoldingProvider{}
+// Ensure PersonioProvider satisfies various provider interfaces.
+var _ provider.Provider = &PersonioProvider{}
 
-// ScaffoldingProvider defines the provider implementation.
-type ScaffoldingProvider struct {
+// PersonioProvider defines the provider implementation.
+type PersonioProvider struct {
 	// version is set to the provider version on release, "dev" when the
 	// provider is built and ran locally, and "test" when running acceptance
 	// testing.
 	version string
 }
 
-// ScaffoldingProviderModel describes the provider data model.
-type ScaffoldingProviderModel struct {
-	Endpoint types.String `tfsdk:"endpoint"`
+// PersonioProviderModel describes the provider data model.
+type PersonioProviderModel struct {
+	Endpoint     types.String `tfsdk:"api_base_url"`
+	ClientId     types.String `tfsdk:"client_id"`
+	ClientSecret types.String `tfsdk:"client_secret"`
 }
 
-func (p *ScaffoldingProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "scaffolding"
+func (p *PersonioProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "personio"
 	resp.Version = p.version
 }
 
-func (p *ScaffoldingProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+func (p *PersonioProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"endpoint": schema.StringAttribute{
-				MarkdownDescription: "Example provider attribute",
-				Optional:            true,
+			"client_id": schema.StringAttribute{
+				Description: "Personio API Client ID",
+				Optional:    true,
+				Sensitive:   true,
+			},
+			"client_secret": schema.StringAttribute{
+				Description: "Personio API Client Secret",
+				Optional:    true,
+				Sensitive:   true,
+			},
+			"api_base_url": schema.StringAttribute{
+				Description: "Personio API base URL",
+				Optional:    true,
 			},
 		},
 	}
 }
 
-func (p *ScaffoldingProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
-	var data ScaffoldingProviderModel
+func (p *PersonioProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+	// get from environment
+	client_id := os.Getenv("PERSONIO_CLIENT_ID")
+	client_secret := os.Getenv("PERSONIO_CLIENT_SECRET")
+
+	var data PersonioProviderModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -52,22 +69,31 @@ func (p *ScaffoldingProvider) Configure(ctx context.Context, req provider.Config
 		return
 	}
 
+	if data.ClientId.ValueString() != "" {
+		client_id = data.ClientId.ValueString()
+	}
+	if data.ClientSecret.ValueString() != "" {
+		client_secret = data.ClientSecret.ValueString()
+	}
+
 	// Configuration values are now available.
 	// if data.Endpoint.IsNull() { /* ... */ }
 
 	// Example client configuration for data sources and resources
-	client := http.DefaultClient
+	credentials := personio.Credentials{ClientId: client_id, ClientSecret: client_secret}
+	client, err := personio.NewClient(context.TODO(), personio.DefaultBaseUrl, credentials)
+	if err != nil {
+		resp.Diagnostics.AddError("Failed to create Personio API client", err.Error())
+	}
 	resp.DataSourceData = client
 	resp.ResourceData = client
 }
 
-func (p *ScaffoldingProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{
-		NewExampleResource,
-	}
+func (p *PersonioProvider) Resources(ctx context.Context) []func() resource.Resource {
+	return []func() resource.Resource{}
 }
 
-func (p *ScaffoldingProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+func (p *PersonioProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		NewExampleDataSource,
 	}
@@ -75,7 +101,7 @@ func (p *ScaffoldingProvider) DataSources(ctx context.Context) []func() datasour
 
 func New(version string) func() provider.Provider {
 	return func() provider.Provider {
-		return &ScaffoldingProvider{
+		return &PersonioProvider{
 			version: version,
 		}
 	}
