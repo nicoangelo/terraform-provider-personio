@@ -76,10 +76,6 @@ func (p *PersonioProvider) Configure(ctx context.Context, req provider.Configure
 		client_secret = data.ClientSecret.ValueString()
 	}
 
-	// Configuration values are now available.
-	// if data.Endpoint.IsNull() { /* ... */ }
-
-	// Example client configuration for data sources and resources
 	credentials := personio.Credentials{ClientId: client_id, ClientSecret: client_secret}
 	client, err := personio.NewClient(context.TODO(), personio.DefaultBaseUrl, credentials)
 	if err != nil {
@@ -95,7 +91,7 @@ func (p *PersonioProvider) Resources(ctx context.Context) []func() resource.Reso
 
 func (p *PersonioProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		NewExampleDataSource,
+		NewEmployeesDataSource,
 	}
 }
 

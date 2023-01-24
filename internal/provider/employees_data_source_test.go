@@ -6,24 +6,23 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccExampleDataSource(t *testing.T) {
+func TestAccEmployeesDataSource(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			// Read testing
 			{
-				Config: testAccExampleDataSourceConfig,
+				Config: testAccEmployeesDataSourceConfig,
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.scaffolding_example.test", "id", "example-id"),
+					resource.TestCheckResourceAttr("data.personio_employees.test", "id", "example-id"),
 				),
 			},
 		},
 	})
 }
 
-const testAccExampleDataSourceConfig = `
-data "scaffolding_example" "test" {
-  configurable_attribute = "example"
+const testAccEmployeesDataSourceConfig = `
+data "personio_employees" "test" {
 }
 `
