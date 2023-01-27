@@ -69,7 +69,9 @@ jobs:
           terraform_version: ${{ matrix.terraform }}
           terraform_wrapper: false
       - run: go mod download
-      - env:
+      - run: go test -v -cover ./internal/provider/
+        env:
           TF_ACC: "1"
-        run: go test -v -cover ./internal/provider/
+          PERSONIO_CLIENT_ID: ${{ secrets.PERSONIO_CLIENT_ID }}
+          PERSONIO_CLIENT_SECRET: ${{ secrets.PERSONIO_CLIENT_SECRET }}
         timeout-minutes: 10
