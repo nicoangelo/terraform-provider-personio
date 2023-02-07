@@ -15,7 +15,7 @@ func TestAccEmployeesDataSource(t *testing.T) {
 			{
 				Config: testAccEmployeesDataSourceConfig,
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.personio_employees.test", "id", "example-id"),
+					resource.TestCheckResourceAttrSet("data.personio_employees.test", "employees"),
 				),
 			},
 		},
