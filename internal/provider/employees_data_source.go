@@ -26,7 +26,8 @@ type EmployeesDataSource struct {
 
 // EmployeesDataSourceModel describes the data source data model.
 type EmployeesDataSourceModel struct {
-	Employees []types.Map `tfsdk:"employees"`
+	Employees []types.Map  `tfsdk:"employees"`
+	Id        types.String `tfsdk:"id"`
 }
 
 func (d *EmployeesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -45,6 +46,10 @@ func (d *EmployeesDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				ElementType: basetypes.MapType{
 					ElemType: types.StringType,
 				},
+			},
+			"id": schema.StringAttribute{
+				MarkdownDescription: "Identifier",
+				Computed:            true,
 			},
 		},
 	}
@@ -85,7 +90,7 @@ func (d *EmployeesDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 
 	}
-
+	data.Id = types.StringValue("employees")
 	for _, e := range employees {
 		employeeAttrs := map[string]interface{}{}
 
@@ -95,7 +100,6 @@ func (d *EmployeesDataSource) Read(ctx context.Context, req datasource.ReadReque
 
 		empObject, _ := types.MapValueFrom(ctx, types.StringType, employeeAttrs)
 		data.Employees = append(data.Employees, empObject)
-
 	}
 
 	// Write logs using the tflog package
