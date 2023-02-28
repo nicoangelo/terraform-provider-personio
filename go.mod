@@ -3,7 +3,7 @@ module github.com/nicoangelo/terraform-provider-personio
 go 1.18
 
 require (
-	github.com/giantswarm/personio-go v0.0.2-0.20230106153945-13e5dcbde032
+	github.com/giantswarm/personio-go v0.1.0
 	github.com/hashicorp/terraform-plugin-docs v0.13.0
 	github.com/hashicorp/terraform-plugin-framework v1.1.1
 	github.com/hashicorp/terraform-plugin-go v0.14.3
