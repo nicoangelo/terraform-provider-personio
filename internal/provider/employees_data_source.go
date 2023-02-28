@@ -3,13 +3,13 @@ package provider
 import (
 	"context"
 	"fmt"
+	"time"
 
 	personio "github.com/giantswarm/personio-go/v1"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces
@@ -92,19 +92,46 @@ func (d *EmployeesDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 	data.Id = types.StringValue("employees")
 	for _, e := range employees {
-		employeeAttrs := map[string]interface{}{}
+		employeeAttrs := map[string]interface{}{
+			"id": fmt.Sprint(*e.GetIntAttribute("id")),
+		}
 
-		employeeAttrs["id"] = fmt.Sprint(*e.GetIntAttribute("id"))
-		employeeAttrs["first_name"] = *e.GetStringAttribute("first_name")
-		employeeAttrs["last_name"] = *e.GetStringAttribute("last_name")
+		for k, v := range e.Attributes {
+			if v.Value == nil {
+				employeeAttrs[k] = ""
+			}
+			switch v.Type {
+			case "integer":
+				intVal := v.GetIntValue()
+				if intVal != nil {
+					employeeAttrs[k] = fmt.Sprint(*intVal)
+				}
+			case "decimal":
+				decVal := v.GetFloatValue()
+				if decVal != nil {
+					employeeAttrs[k] = fmt.Sprint(*decVal)
+				}
+			case "standard", "multiline":
+				strVal := v.GetStringValue()
+				if strVal != nil {
+					employeeAttrs[k] = *strVal
+				}
+			case "date":
+				timeVal := v.GetTimeValue()
+				if timeVal != nil {
+					employeeAttrs[k] = (*timeVal).UTC().Format(time.RFC3339)
+				}
+			case "list":
+				listVal := v.GetListValue()
+				if listVal != nil && len(*listVal) == 1 {
+					employeeAttrs[k] = (*listVal)[0]
+				}
+			}
+		}
 
 		empObject, _ := types.MapValueFrom(ctx, types.StringType, employeeAttrs)
 		data.Employees = append(data.Employees, empObject)
 	}
-
-	// Write logs using the tflog package
-	// Documentation: https://terraform.io/plugin/log
-	tflog.Trace(ctx, "read a data source")
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

@@ -17,6 +17,7 @@ Employees data source
 
 ### Read-Only
 
-- `employees` (String) List of employees
+- `employees` (List of Map of String) List of employees
+- `id` (String) Identifier
 
 
