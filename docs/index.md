@@ -13,8 +13,9 @@ description: |-
 ## Example Usage
 
 ```terraform
-provider "scaffolding" {
-  # example configuration here
+provider "personio" {
+  client_id     = "..."
+  client_secret = "..."
 }
 ```
 
@@ -23,6 +24,6 @@ provider "scaffolding" {
 
 ### Optional
 
-- `api_base_url` (String) Personio API base URL
-- `client_id` (String, Sensitive) Personio API Client ID
-- `client_secret` (String, Sensitive) Personio API Client Secret
+- `api_base_url` (String) Personio API base URL. Can also be set from the `PERSONIO_API_URL` environment variable. Defaults to `https://api.personio.de/v1`.
+- `client_id` (String, Sensitive) Personio API Client ID. Can also be set from the `PERSONIO_CLIENT_ID` environment variable.
+- `client_secret` (String, Sensitive) Personio API Client Secret. Can also be set from the `PERSONIO_CLIENT_SECRET` environment variable.

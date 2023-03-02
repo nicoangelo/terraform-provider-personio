@@ -37,7 +37,17 @@ func (d *EmployeesDataSource) Metadata(ctx context.Context, req datasource.Metad
 func (d *EmployeesDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "Employees data source",
+		MarkdownDescription: `
+Employees data source
+
+Retrieves all employees and their attributes. The set of attributes that is returned
+is limited by the configuration of the API credentials in Personio.
+
+## Limitations
+
+- All employee attributes are converted to strings. This is due to employee attributes being
+  different for each tenant. Dynamic attributes on map values are not supported out-of-the box by Terraform.
+`,
 
 		Attributes: map[string]schema.Attribute{
 			"employees": schema.ListAttribute{
