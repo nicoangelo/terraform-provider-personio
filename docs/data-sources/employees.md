@@ -8,7 +8,7 @@ description: |-
   is limited by the configuration of the API credentials in Personio.
   Limitations
   All employee attributes are converted to strings. This is due to employee attributes being
-  different for each tenant. Dynamic attributes on map values are not supported out-of-the box by Terraform.
+  different for each tenant. Dynamic attributes on map values are not supported out-of-the box by Terraform.Time attributes are returned in UTC timezone.
 ---
 
 # personio_employees (Data Source)
@@ -22,6 +22,7 @@ is limited by the configuration of the API credentials in Personio.
 
 - All employee attributes are converted to strings. This is due to employee attributes being
   different for each tenant. Dynamic attributes on map values are not supported out-of-the box by Terraform.
+- Time attributes are returned in UTC timezone.
 
 ## Example Usage
 
@@ -35,7 +36,7 @@ data "personio_employees" "example" {
 
 ### Read-Only
 
-- `employees` (List of Map of String) List of employees
+- `employees` (List of Map of String) List of employees and their attributes.
 - `id` (String) Identifier
 
 

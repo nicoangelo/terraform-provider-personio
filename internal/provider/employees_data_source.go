@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"time"
 
 	personio "github.com/giantswarm/personio-go/v1"
@@ -47,11 +48,12 @@ is limited by the configuration of the API credentials in Personio.
 
 - All employee attributes are converted to strings. This is due to employee attributes being
   different for each tenant. Dynamic attributes on map values are not supported out-of-the box by Terraform.
+- Time attributes are returned in UTC timezone.
 `,
 
 		Attributes: map[string]schema.Attribute{
 			"employees": schema.ListAttribute{
-				MarkdownDescription: "List of employees",
+				MarkdownDescription: "List of employees and their attributes.",
 				Computed:            true,
 				ElementType: basetypes.MapType{
 					ElemType: types.StringType,
@@ -100,11 +102,13 @@ func (d *EmployeesDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 
 	}
-	data.Id = types.StringValue("employees")
+	datasourceId := ""
 	for _, e := range employees {
+		employeeId := fmt.Sprint(*e.GetIntAttribute("id"))
 		employeeAttrs := map[string]interface{}{
-			"id": fmt.Sprint(*e.GetIntAttribute("id")),
+			"id": employeeId,
 		}
+		datasourceId = datasourceId + employeeId
 
 		for k, v := range e.Attributes {
 			if v.Value == nil {
@@ -112,29 +116,24 @@ func (d *EmployeesDataSource) Read(ctx context.Context, req datasource.ReadReque
 			}
 			switch v.Type {
 			case "integer":
-				intVal := v.GetIntValue()
-				if intVal != nil {
-					employeeAttrs[k] = fmt.Sprint(*intVal)
+				intVal, ok := v.Value.(int64)
+				if ok {
+					employeeAttrs[k] = fmt.Sprint(intVal)
 				}
 			case "decimal":
-				decVal := v.GetFloatValue()
-				if decVal != nil {
-					employeeAttrs[k] = fmt.Sprint(*decVal)
+				decVal, ok := v.Value.(float64)
+				if ok {
+					employeeAttrs[k] = fmt.Sprint(decVal)
 				}
-			case "standard", "multiline":
-				strVal := v.GetStringValue()
-				if strVal != nil {
-					employeeAttrs[k] = *strVal
+			case "standard", "multiline", "link", "list":
+				strVal, ok := v.Value.(string)
+				if ok {
+					employeeAttrs[k] = strVal
 				}
 			case "date":
 				timeVal := v.GetTimeValue()
 				if timeVal != nil {
 					employeeAttrs[k] = (*timeVal).UTC().Format(time.RFC3339)
-				}
-			case "list":
-				listVal := v.GetListValue()
-				if listVal != nil && len(*listVal) == 1 {
-					employeeAttrs[k] = (*listVal)[0]
 				}
 			}
 		}
@@ -142,6 +141,11 @@ func (d *EmployeesDataSource) Read(ctx context.Context, req datasource.ReadReque
 		empObject, _ := types.MapValueFrom(ctx, types.StringType, employeeAttrs)
 		data.Employees = append(data.Employees, empObject)
 	}
+	if datasourceId == "" {
+		datasourceId = fmt.Sprint(rand.Int())
+	}
+
+	data.Id = types.StringValue(fmt.Sprintf("employees-%ss", datasourceId))
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
