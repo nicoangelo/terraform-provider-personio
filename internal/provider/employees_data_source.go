@@ -3,12 +3,12 @@ package provider
 import (
 	"context"
 	"fmt"
-	"math/rand"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/nicoangelo/terraform-provider-personio/internal/adapter"
+	"github.com/nicoangelo/terraform-provider-personio/internal/utils"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces
@@ -39,12 +39,28 @@ func (d *EmployeesDataSource) Schema(ctx context.Context, req datasource.SchemaR
 		MarkdownDescription: `
 Employees data source
 
-Retrieves all employees and their attributes. The set of attributes that is returned
-is limited by the configuration of the API credentials in Personio.
+Retrieves all employees and their attributes. The set of attributes that have a non-null value
+is defined by the configuration of the API credential in Personio ("Readable employee attributes").
+
+Certain attributes are preset and are always returned by this data source. These attributes cannot be removed or changed
+in the Personio Admin interface. If an attribute is not configured as a readable attribute of the API credential,
+its value will be ` + "`null`" + `. See attributes described as "preset"
+[in the Personio documentation](https://support.personio.de/hc/en-us/articles/115002250165-Best-Practice-Sections-and-Attributes).
+
+Dynamic attributes can be configured per tenant, and may have different types. All of them are converted to a
+string representation in Terraform.
+Currently supported Personio API data types with their conversions are
+* integer/decimal -> number
+* date -> RFC3339 formatted string in UTC timezone
+* links -> string
+* standard -> string
+* multiline -> string
+
+Tag attributes are converted to a list of strings.
 
 ## Limitations
 
-- All employee attributes are converted to strings. This is due to employee attributes being
+- All dynamic employee attributes are converted to strings. This is due to employee attributes being
   different for each tenant. Dynamic attributes on map values are not supported out of the box by Terraform.
 - Time attributes are returned in UTC timezone.
 `,
@@ -151,6 +167,13 @@ is limited by the configuration of the API credentials in Personio.
 							ElementType: types.StringType,
 							Computed:    true,
 						},
+						"tag_attributes": schema.MapAttribute{
+							Description: "Attributes of the employee that are stored as multi-select from a predefined list.",
+							ElementType: types.SetType{
+								ElemType: types.StringType,
+							},
+							Computed: true,
+						},
 					},
 				},
 			},
@@ -195,20 +218,13 @@ func (d *EmployeesDataSource) Read(ctx context.Context, req datasource.ReadReque
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read employees, got error: %s", err))
 		return
-
 	}
-	datasourceId := ""
-	for _, e := range employees {
-		datasourceId = datasourceId + fmt.Sprint(e.Id)
-		// empAttrs, _ := types.MapValueFrom(ctx, types.StringType, e.DynamicAttributes)
 
+	for _, e := range employees {
 		data.Employees = append(data.Employees, e)
 	}
-	if datasourceId == "" {
-		datasourceId = fmt.Sprint(rand.Int())
-	}
 
-	data.Id = types.StringValue(fmt.Sprintf("employees-%ss", datasourceId))
+	data.Id = utils.GetUnstableId("personio_employees")
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

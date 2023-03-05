@@ -4,24 +4,53 @@ page_title: "personio_employees Data Source - terraform-provider-personio"
 subcategory: ""
 description: |-
   Employees data source
-  Retrieves all employees and their attributes. The set of attributes that is returned
-  is limited by the configuration of the API credentials in Personio.
+  Retrieves all employees and their attributes. The set of attributes that have a non-null value
+  is defined by the configuration of the API credential in Personio ("Readable employee attributes").
+  Certain attributes are preset and are always returned by this data source. These attributes cannot be removed or changed
+  in the Personio Admin interface. If an attribute is not configured as a readable attribute of the API credential,
+  its value will be null. See attributes described as "preset"
+  in the Personio documentation https://support.personio.de/hc/en-us/articles/115002250165-Best-Practice-Sections-and-Attributes.
+  Dynamic attributes can be configured per tenant, and may have different types. All of them are converted to a
+  string representation in Terraform.
+  Currently supported Personio API data types with their conversions are
+  * integer/decimal -> number
+  * date -> RFC3339 formatted string in UTC timezone
+  * links -> string
+  * standard -> string
+  * multiline -> string
+  Tag attributes are converted to a list of strings.
   Limitations
-  All employee attributes are converted to strings. This is due to employee attributes being
-  different for each tenant. Dynamic attributes on map values are not supported out-of-the box by Terraform.Time attributes are returned in UTC timezone.
+  All dynamic employee attributes are converted to strings. This is due to employee attributes being
+  different for each tenant. Dynamic attributes on map values are not supported out of the box by Terraform.Time attributes are returned in UTC timezone.
 ---
 
 # personio_employees (Data Source)
 
 Employees data source
 
-Retrieves all employees and their attributes. The set of attributes that is returned
-is limited by the configuration of the API credentials in Personio.
+Retrieves all employees and their attributes. The set of attributes that have a non-null value
+is defined by the configuration of the API credential in Personio ("Readable employee attributes").
+
+Certain attributes are preset and are always returned by this data source. These attributes cannot be removed or changed
+in the Personio Admin interface. If an attribute is not configured as a readable attribute of the API credential,
+its value will be `null`. See attributes described as "preset"
+[in the Personio documentation](https://support.personio.de/hc/en-us/articles/115002250165-Best-Practice-Sections-and-Attributes).
+
+Dynamic attributes can be configured per tenant, and may have different types. All of them are converted to a
+string representation in Terraform.
+Currently supported Personio API data types with their conversions are
+* integer/decimal -> number
+* date -> RFC3339 formatted string in UTC timezone
+* links -> string
+* standard -> string
+* multiline -> string
+
+Tag attributes are converted to a list of strings.
 
 ## Limitations
 
-- All employee attributes are converted to strings. This is due to employee attributes being
-  different for each tenant. Dynamic attributes on map values are not supported out-of-the box by Terraform.
+- All dynamic employee attributes are converted to strings. This is due to employee attributes being
+  different for each tenant. Dynamic attributes on map values are not supported out of the box by Terraform.
 - Time attributes are returned in UTC timezone.
 
 ## Example Usage
@@ -36,7 +65,38 @@ data "personio_employees" "example" {
 
 ### Read-Only
 
-- `employees` (List of Map of String) List of employees and their attributes.
+- `employees` (Attributes List) List of employees and their attributes. (see [below for nested schema](#nestedatt--employees))
 - `id` (String) Identifier
+
+<a id="nestedatt--employees"></a>
+### Nested Schema for `employees`
+
+Read-Only:
+
+- `contract_end_date` (String) Creation date of the employee record
+- `created_at` (String) Creation date of the employee record
+- `dynamic_attributes` (Map of String) Additional dynamic attributes of the employee.
+- `email` (String) Email address of the employee
+- `employment_type` (String) Employment type (`internal` or `external`)
+- `first_name` (String) First name
+- `fix_salary` (Number) Fixed salary amount
+- `fix_salary_interval` (String) Fixed salary interval
+- `gender` (String) Gender
+- `hire_date` (String) Hire date
+- `hourly_salary` (Number) Hourly salary amount
+- `id` (Number) Personio Employee ID
+- `last_modified_at` (String) Last modification date of employee record
+- `last_name` (String) Last name
+- `last_working_day` (String) Last working day of employee
+- `position` (String) Position of employee
+- `probation_period_end` (String) End of probation period
+- `status` (String) Status of the employee (active,...)
+- `subcompany` (String) Subcompany
+- `tag_attributes` (Map of Set of String) Attributes of the employee that are stored as multi-select from a predefined list.
+- `termination_date` (String) Termination date
+- `termination_reason` (String) Termination date
+- `termination_type` (String) Termination date
+- `vacation_day_balance` (Number) Vacation day balance
+- `weekly_working_hours` (Number) Weekly working hours
 
 
