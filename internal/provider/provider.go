@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"os"
 
-	personio "github.com/giantswarm/personio-go/v1"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/nicoangelo/terraform-provider-personio/internal/adapter"
 	"github.com/nicoangelo/terraform-provider-personio/internal/utils"
 )
 
@@ -21,7 +21,6 @@ const (
 	clientIdEnvKey     string = "PERSONIO_CLIENT_ID"
 	clientSecretEnvKey string = "PERSONIO_CLIENT_SECRET"
 	apiBaseUrlEnvKey   string = "PERSONIO_API_URL"
-	apiBaseUrlDefault  string = personio.DefaultBaseUrl
 )
 
 // PersonioProvider defines the provider implementation.
@@ -65,7 +64,7 @@ func (p *PersonioProvider) Schema(ctx context.Context, req provider.SchemaReques
 				Description: fmt.Sprintf(
 					"Personio API base URL. Can also be set from the `%s` environment variable. Defaults to `%s`.",
 					apiBaseUrlEnvKey,
-					apiBaseUrlDefault),
+					adapter.ApiBaseUrlDefault),
 				Optional: true,
 			},
 		},
@@ -83,15 +82,14 @@ func (p *PersonioProvider) Configure(ctx context.Context, req provider.Configure
 
 	client_id := utils.CoalesceEmpty(data.ClientId.ValueString(), os.Getenv(clientIdEnvKey))
 	client_secret := utils.CoalesceEmpty(data.ClientSecret.ValueString(), os.Getenv(clientSecretEnvKey))
-	apiBaseUrl := utils.CoalesceEmpty(os.Getenv(apiBaseUrlEnvKey), apiBaseUrlDefault)
+	apiBaseUrl := utils.CoalesceEmpty(os.Getenv(apiBaseUrlEnvKey), adapter.ApiBaseUrlDefault)
 
-	credentials := personio.Credentials{ClientId: client_id, ClientSecret: client_secret}
-	client, err := personio.NewClient(context.TODO(), apiBaseUrl, credentials)
+	personioAdapter, err := adapter.NewAdapter(apiBaseUrl, client_id, client_secret)
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to create Personio API client", err.Error())
 	}
-	resp.DataSourceData = client
-	resp.ResourceData = client
+	resp.DataSourceData = personioAdapter
+	resp.ResourceData = personioAdapter
 }
 
 func (p *PersonioProvider) Resources(ctx context.Context) []func() resource.Resource {

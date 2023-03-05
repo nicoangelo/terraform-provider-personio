@@ -4,13 +4,11 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
-	"time"
 
-	personio "github.com/giantswarm/personio-go/v1"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	"github.com/nicoangelo/terraform-provider-personio/internal/adapter"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces
@@ -22,13 +20,13 @@ func NewEmployeesDataSource() datasource.DataSource {
 
 // EmployeesDataSource defines the data source implementation.
 type EmployeesDataSource struct {
-	client *personio.Client
+	client *adapter.PersonioAdapter
 }
 
 // EmployeesDataSourceModel describes the data source data model.
 type EmployeesDataSourceModel struct {
-	Employees []types.Map  `tfsdk:"employees"`
-	Id        types.String `tfsdk:"id"`
+	Employees []adapter.Employee `tfsdk:"employees"`
+	Id        types.String       `tfsdk:"id"`
 }
 
 func (d *EmployeesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -47,16 +45,113 @@ is limited by the configuration of the API credentials in Personio.
 ## Limitations
 
 - All employee attributes are converted to strings. This is due to employee attributes being
-  different for each tenant. Dynamic attributes on map values are not supported out-of-the box by Terraform.
+  different for each tenant. Dynamic attributes on map values are not supported out of the box by Terraform.
 - Time attributes are returned in UTC timezone.
 `,
-
 		Attributes: map[string]schema.Attribute{
-			"employees": schema.ListAttribute{
+			"employees": schema.ListNestedAttribute{
 				MarkdownDescription: "List of employees and their attributes.",
 				Computed:            true,
-				ElementType: basetypes.MapType{
-					ElemType: types.StringType,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"id": schema.NumberAttribute{
+							Description: "Personio Employee ID",
+							Computed:    true,
+						},
+						"first_name": schema.StringAttribute{
+							Description: "First name",
+							Computed:    true,
+						},
+						"last_name": schema.StringAttribute{
+							Description: "Last name",
+							Computed:    true,
+						},
+						"created_at": schema.StringAttribute{
+							Description: "Creation date of the employee record",
+							Computed:    true,
+						},
+						"contract_end_date": schema.StringAttribute{
+							Description: "Creation date of the employee record",
+							Computed:    true,
+						},
+						"email": schema.StringAttribute{
+							Description: "Email address of the employee",
+							Computed:    true,
+						},
+						"employment_type": schema.StringAttribute{
+							Description: "Employment type (`internal` or `external`)",
+							Computed:    true,
+						},
+						"fix_salary": schema.Float64Attribute{
+							Description: "Fixed salary amount",
+							Computed:    true,
+						},
+						"fix_salary_interval": schema.StringAttribute{
+							Description: "Fixed salary interval",
+							Computed:    true,
+						},
+						"hourly_salary": schema.Float64Attribute{
+							Description: "Hourly salary amount",
+							Computed:    true,
+						},
+						"gender": schema.StringAttribute{
+							Description: "Gender",
+							Computed:    true,
+						},
+						"hire_date": schema.StringAttribute{
+							Description: "Hire date",
+							Computed:    true,
+						},
+						"last_modified_at": schema.StringAttribute{
+							Description: "Last modification date of employee record",
+							Computed:    true,
+						},
+						"last_working_day": schema.StringAttribute{
+							Description: "Last working day of employee",
+							Computed:    true,
+						},
+						"position": schema.StringAttribute{
+							Description: "Position of employee",
+							Computed:    true,
+						},
+						"probation_period_end": schema.StringAttribute{
+							Description: "End of probation period",
+							Computed:    true,
+						},
+						"status": schema.StringAttribute{
+							Description: "Status of the employee (active,...)",
+							Computed:    true,
+						},
+						"subcompany": schema.StringAttribute{
+							Description: "Subcompany",
+							Computed:    true,
+						},
+						"termination_date": schema.StringAttribute{
+							Description: "Termination date",
+							Computed:    true,
+						},
+						"termination_reason": schema.StringAttribute{
+							Description: "Termination date",
+							Computed:    true,
+						},
+						"termination_type": schema.StringAttribute{
+							Description: "Termination date",
+							Computed:    true,
+						},
+						"vacation_day_balance": schema.Float64Attribute{
+							Description: "Vacation day balance",
+							Computed:    true,
+						},
+						"weekly_working_hours": schema.Float64Attribute{
+							Description: "Weekly working hours",
+							Computed:    true,
+						},
+						"dynamic_attributes": schema.MapAttribute{
+							Description: "Additional dynamic attributes of the employee.",
+							ElementType: types.StringType,
+							Computed:    true,
+						},
+					},
 				},
 			},
 			"id": schema.StringAttribute{
@@ -73,12 +168,12 @@ func (d *EmployeesDataSource) Configure(ctx context.Context, req datasource.Conf
 		return
 	}
 
-	client, ok := req.ProviderData.(*personio.Client)
+	client, ok := req.ProviderData.(*adapter.PersonioAdapter)
 
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected *personio.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *adapter.PersonioAdapter, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
@@ -104,42 +199,10 @@ func (d *EmployeesDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 	datasourceId := ""
 	for _, e := range employees {
-		employeeId := fmt.Sprint(*e.GetIntAttribute("id"))
-		employeeAttrs := map[string]interface{}{
-			"id": employeeId,
-		}
-		datasourceId = datasourceId + employeeId
+		datasourceId = datasourceId + fmt.Sprint(e.Id)
+		// empAttrs, _ := types.MapValueFrom(ctx, types.StringType, e.DynamicAttributes)
 
-		for k, v := range e.Attributes {
-			if v.Value == nil {
-				employeeAttrs[k] = ""
-			}
-			switch v.Type {
-			case "integer":
-				intVal, ok := v.Value.(int64)
-				if ok {
-					employeeAttrs[k] = fmt.Sprint(intVal)
-				}
-			case "decimal":
-				decVal, ok := v.Value.(float64)
-				if ok {
-					employeeAttrs[k] = fmt.Sprint(decVal)
-				}
-			case "standard", "multiline", "link", "list":
-				strVal, ok := v.Value.(string)
-				if ok {
-					employeeAttrs[k] = strVal
-				}
-			case "date":
-				timeVal := v.GetTimeValue()
-				if timeVal != nil {
-					employeeAttrs[k] = (*timeVal).UTC().Format(time.RFC3339)
-				}
-			}
-		}
-
-		empObject, _ := types.MapValueFrom(ctx, types.StringType, employeeAttrs)
-		data.Employees = append(data.Employees, empObject)
+		data.Employees = append(data.Employees, e)
 	}
 	if datasourceId == "" {
 		datasourceId = fmt.Sprint(rand.Int())
