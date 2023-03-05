@@ -182,6 +182,11 @@ Tag attributes are converted to a list of strings.
 							},
 							Computed: true,
 						},
+						"supervisor": schema.ObjectAttribute{
+							Description:    "Supervisor of the employee",
+							AttributeTypes: adapter.SupervisorObjectTypes,
+							Computed:       true,
+						},
 					},
 				},
 			},

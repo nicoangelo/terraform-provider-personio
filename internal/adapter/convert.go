@@ -69,9 +69,9 @@ func convertAttrToInt(v personio.Attribute) types.Int64 {
 	if v.Value == nil {
 		return types.Int64Null()
 	}
-	intVal, ok := v.Value.(int64)
+	intVal, ok := v.Value.(float64)
 	if ok {
-		return types.Int64Value(intVal)
+		return types.Int64Value(int64(intVal))
 	}
 	return types.Int64Null()
 }

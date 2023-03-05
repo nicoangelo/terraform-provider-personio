@@ -4,8 +4,16 @@ import (
 	"strings"
 
 	personio "github.com/giantswarm/personio-go/v1"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
+
+var SupervisorObjectTypes = map[string]attr.Type{
+	"id":         types.Int64Type,
+	"email":      types.StringType,
+	"first_name": types.StringType,
+	"last_name":  types.StringType,
+}
 
 type Employee struct {
 	Id                 types.Int64   `tfsdk:"id"`
@@ -27,6 +35,7 @@ type Employee struct {
 	ProbationPeriodEnd types.String  `tfsdk:"probation_period_end"`
 	Status             types.String  `tfsdk:"status"`
 	Subcompany         types.String  `tfsdk:"subcompany"`
+	Supervisor         types.Object  `tfsdk:"supervisor"`
 	Team               types.String  `tfsdk:"team"`
 	TerminationDate    types.String  `tfsdk:"termination_date"`
 	TerminationReason  types.String  `tfsdk:"termination_reason"`
@@ -54,6 +63,7 @@ func NewEmployee(pe *personio.Employee) (e Employee) {
 	e.Subcompany = convertAttrToString(pe.Attributes["subcompany"])
 	e.Department = convertMapItemToString(pe.Attributes["department"], "name")
 	e.Team = convertMapItemToString(pe.Attributes["team"], "name")
+	e.Supervisor = convertSupervisor(pe.Attributes["supervisor"])
 
 	e.HireDate = convertAttrToDateString(pe.Attributes["hire_date"])
 	e.ProbationPeriodEnd = convertAttrToDateString(pe.Attributes["probation_period_end"])
@@ -84,4 +94,19 @@ func NewEmployee(pe *personio.Employee) (e Employee) {
 
 	}
 	return e
+}
+
+func convertSupervisor(v personio.Attribute) types.Object {
+	if v.Value == nil {
+		return types.ObjectNull(SupervisorObjectTypes)
+	}
+	obj, _ := types.ObjectValue(
+		SupervisorObjectTypes,
+		map[string]attr.Value{
+			"id":         types.Int64Value(int64(v.GetMapValue()["id"].(map[string]interface{})["value"].(float64))),
+			"email":      types.StringValue(v.GetMapValue()["email"].(map[string]interface{})["value"].(string)),
+			"first_name": types.StringValue(v.GetMapValue()["first_name"].(map[string]interface{})["value"].(string)),
+			"last_name":  types.StringValue(v.GetMapValue()["last_name"].(map[string]interface{})["value"].(string)),
+		})
+	return obj
 }

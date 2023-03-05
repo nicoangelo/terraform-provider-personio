@@ -93,6 +93,7 @@ Read-Only:
 - `probation_period_end` (String) End of probation period
 - `status` (String) Status of the employee (active,...)
 - `subcompany` (String) Subcompany
+- `supervisor` (Object) Supervisor of the employee (see [below for nested schema](#nestedatt--employees--supervisor))
 - `tag_attributes` (Map of Set of String) Attributes of the employee that are stored as multi-select from a predefined list.
 - `team` (String) Team name
 - `termination_date` (String) Termination date
@@ -100,5 +101,15 @@ Read-Only:
 - `termination_type` (String) Termination date
 - `vacation_day_balance` (Number) Vacation day balance
 - `weekly_working_hours` (Number) Weekly working hours
+
+<a id="nestedatt--employees--supervisor"></a>
+### Nested Schema for `employees.supervisor`
+
+Read-Only:
+
+- `email` (String)
+- `first_name` (String)
+- `id` (Number)
+- `last_name` (String)
 
 
