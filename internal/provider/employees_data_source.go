@@ -90,6 +90,10 @@ Tag attributes are converted to a list of strings.
 							Description: "Creation date of the employee record",
 							Computed:    true,
 						},
+						"department": schema.StringAttribute{
+							Description: "Department name",
+							Computed:    true,
+						},
 						"email": schema.StringAttribute{
 							Description: "Email address of the employee",
 							Computed:    true,
@@ -140,6 +144,10 @@ Tag attributes are converted to a list of strings.
 						},
 						"subcompany": schema.StringAttribute{
 							Description: "Subcompany",
+							Computed:    true,
+						},
+						"team": schema.StringAttribute{
+							Description: "Team name",
 							Computed:    true,
 						},
 						"termination_date": schema.StringAttribute{

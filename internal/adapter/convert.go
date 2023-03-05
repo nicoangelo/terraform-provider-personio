@@ -9,13 +9,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// convertAnyPersonioAttrToString inspects the underlying type returned from the Personio API
+// convertAnyAttrToString inspects the underlying type returned from the Personio API
 // and uses an appropriate conversion mechanism to convert it to a string.
 // Conventions:
 //   - integer, decimal: fmt.Sprintf()
 //   - standard, multiline, link, list: direct conversion to string
 //   - date: fmt.Sprintf() in UTC
-func convertAnyPersonioAttrToString(v personio.Attribute) types.String {
+func convertAnyAttrToString(v personio.Attribute) types.String {
 	// bail early
 	if v.Value == nil {
 		return types.StringNull()
@@ -32,14 +32,14 @@ func convertAnyPersonioAttrToString(v personio.Attribute) types.String {
 			return types.StringValue(fmt.Sprint(decVal))
 		}
 	case "standard", "multiline", "link", "list":
-		return convertPersonioAttrToString(v)
+		return convertAttrToString(v)
 	case "date":
-		return convertPersonioAttrToDateString(v)
+		return convertAttrToDateString(v)
 	}
 	return types.StringNull()
 }
 
-func convertPersonioTagsToStrings(v personio.Attribute) []string {
+func convertTagsToStrings(v personio.Attribute) []string {
 	if v.Value == nil {
 		return []string{}
 	}
@@ -50,9 +50,9 @@ func convertPersonioTagsToStrings(v personio.Attribute) []string {
 	return []string{}
 }
 
-// convertPersonioAttrToString converts any standard, multiline, link, list API value
+// convertAttrToString converts any standard, multiline, link, list API value
 // to a Terraform string value. If the value is null, types.StringNull is returned.
-func convertPersonioAttrToString(v personio.Attribute) types.String {
+func convertAttrToString(v personio.Attribute) types.String {
 	if v.Value == nil {
 		return types.StringNull()
 	}
@@ -63,9 +63,9 @@ func convertPersonioAttrToString(v personio.Attribute) types.String {
 	return types.StringNull()
 }
 
-// convertPersonioAttrToString converts a integer API value
+// convertPersonioAttrToString converts an integer API value
 // to a Terraform Int64 value. If the value is null, types.Int64Null is returned.
-func convertPersonioAttrToInt(v personio.Attribute) types.Int64 {
+func convertAttrToInt(v personio.Attribute) types.Int64 {
 	if v.Value == nil {
 		return types.Int64Null()
 	}
@@ -78,7 +78,7 @@ func convertPersonioAttrToInt(v personio.Attribute) types.Int64 {
 
 // convertPersonioAttrToString converts a decimal API value
 // to a Terraform Float64 value. If the value is null, types.Float64Null is returned.
-func convertPersonioAttrToFloat(v personio.Attribute) types.Float64 {
+func convertAttrToFloat(v personio.Attribute) types.Float64 {
 	if v.Value == nil {
 		return types.Float64Null()
 	}
@@ -89,9 +89,9 @@ func convertPersonioAttrToFloat(v personio.Attribute) types.Float64 {
 	return types.Float64Null()
 }
 
-// convertPersonioAttrToDateString converts a time API value
+// convertAttrToDateString converts a time API value
 // to a Terraform String value in UTC timezone. If the value is null, types.StringNull is returned.
-func convertPersonioAttrToDateString(v personio.Attribute) types.String {
+func convertAttrToDateString(v personio.Attribute) types.String {
 	if v.Value == nil {
 		return types.StringNull()
 	}
@@ -100,4 +100,32 @@ func convertPersonioAttrToDateString(v personio.Attribute) types.String {
 		return types.StringValue((*timeVal).UTC().Format(time.RFC3339))
 	}
 	return types.StringNull()
+}
+
+// convertMapItemToString converts a specific attribute of a nested map API value (e.g. supervisor)
+// to a Terraform String value. If the value is null, types.StringNull is returned.
+func convertMapItemToString(v personio.Attribute, itemKey string) types.String {
+	if v.Value == nil {
+		return types.StringNull()
+	}
+	mapVal := v.GetMapValue()
+	strVal, ok := mapVal[itemKey].(string)
+	if ok {
+		return types.StringValue(strVal)
+	}
+	return types.StringNull()
+}
+
+// convertMapItemToInt converts a specific attribute of a nested map API value (e.g. supervisor)
+// to a Terraform number value. If the value is null, types.Int64Null is returned.
+func convertMapItemToInt(v personio.Attribute, itemKey string) types.Int64 {
+	if v.Value == nil {
+		return types.Int64Null()
+	}
+	mapVal := v.GetMapValue()
+	intVal, ok := mapVal[itemKey].(int64)
+	if ok {
+		return types.Int64Value(intVal)
+	}
+	return types.Int64Null()
 }

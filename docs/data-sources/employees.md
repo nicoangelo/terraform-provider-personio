@@ -75,6 +75,7 @@ Read-Only:
 
 - `contract_end_date` (String) Creation date of the employee record
 - `created_at` (String) Creation date of the employee record
+- `department` (String) Department name
 - `dynamic_attributes` (Map of String) Additional dynamic attributes of the employee.
 - `email` (String) Email address of the employee
 - `employment_type` (String) Employment type (`internal` or `external`)
@@ -93,6 +94,7 @@ Read-Only:
 - `status` (String) Status of the employee (active,...)
 - `subcompany` (String) Subcompany
 - `tag_attributes` (Map of Set of String) Attributes of the employee that are stored as multi-select from a predefined list.
+- `team` (String) Team name
 - `termination_date` (String) Termination date
 - `termination_reason` (String) Termination date
 - `termination_type` (String) Termination date
