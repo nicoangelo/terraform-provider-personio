@@ -35,7 +35,7 @@ type Employee struct {
 	ProbationPeriodEnd types.String  `tfsdk:"probation_period_end"`
 	Status             types.String  `tfsdk:"status"`
 	Subcompany         types.String  `tfsdk:"subcompany"`
-	Supervisor         types.Object  `tfsdk:"supervisor"`
+	Supervisor         *Supervisor   `tfsdk:"supervisor"`
 	Team               types.String  `tfsdk:"team"`
 	TerminationDate    types.String  `tfsdk:"termination_date"`
 	TerminationReason  types.String  `tfsdk:"termination_reason"`
@@ -45,6 +45,13 @@ type Employee struct {
 
 	DynamicAttributes map[string]types.String `tfsdk:"dynamic_attributes"`
 	TagAttributes     map[string][]string     `tfsdk:"tag_attributes"`
+}
+
+type Supervisor struct {
+	Id        types.Int64  `tfsdk:"id"`
+	Email     types.String `tfsdk:"email"`
+	FirstName types.String `tfsdk:"first_name"`
+	LastName  types.String `tfsdk:"last_name"`
 }
 
 func NewEmployee(pe *personio.Employee) (e Employee) {
@@ -96,17 +103,14 @@ func NewEmployee(pe *personio.Employee) (e Employee) {
 	return e
 }
 
-func convertSupervisor(v personio.Attribute) types.Object {
+func convertSupervisor(v personio.Attribute) *Supervisor {
 	if v.Value == nil {
-		return types.ObjectNull(SupervisorObjectTypes)
+		return nil
 	}
-	obj, _ := types.ObjectValue(
-		SupervisorObjectTypes,
-		map[string]attr.Value{
-			"id":         types.Int64Value(int64(v.GetMapValue()["id"].(map[string]interface{})["value"].(float64))),
-			"email":      types.StringValue(v.GetMapValue()["email"].(map[string]interface{})["value"].(string)),
-			"first_name": types.StringValue(v.GetMapValue()["first_name"].(map[string]interface{})["value"].(string)),
-			"last_name":  types.StringValue(v.GetMapValue()["last_name"].(map[string]interface{})["value"].(string)),
-		})
-	return obj
+	return &Supervisor{
+		Id:        convertNestedMapItemToInt(v, "id"),
+		Email:     convertNestedMapItemToString(v, "email"),
+		FirstName: convertNestedMapItemToString(v, "first_name"),
+		LastName:  convertNestedMapItemToString(v, "last_name"),
+	}
 }
