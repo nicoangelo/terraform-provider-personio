@@ -93,7 +93,7 @@ Read-Only:
 - `probation_period_end` (String) End of probation period
 - `status` (String) Status of the employee (active,...)
 - `subcompany` (String) Subcompany
-- `supervisor` (Object) Supervisor of the employee (see [below for nested schema](#nestedatt--employees--supervisor))
+- `supervisor` (Attributes) Supervisor of the employee (see [below for nested schema](#nestedatt--employees--supervisor))
 - `tag_attributes` (Map of Set of String) Attributes of the employee that are stored as multi-select from a predefined list.
 - `team` (String) Team name
 - `termination_date` (String) Termination date
@@ -107,9 +107,9 @@ Read-Only:
 
 Read-Only:
 
-- `email` (String)
-- `first_name` (String)
-- `id` (Number)
-- `last_name` (String)
+- `email` (String) Email address of the employee
+- `first_name` (String) First name
+- `id` (Number) Personio Employee ID
+- `last_name` (String) Last name
 
 

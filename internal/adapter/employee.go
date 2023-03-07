@@ -4,16 +4,8 @@ import (
 	"strings"
 
 	personio "github.com/giantswarm/personio-go/v1"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
-
-var SupervisorObjectTypes = map[string]attr.Type{
-	"id":         types.Int64Type,
-	"email":      types.StringType,
-	"first_name": types.StringType,
-	"last_name":  types.StringType,
-}
 
 type Employee struct {
 	Id                 types.Int64   `tfsdk:"id"`
