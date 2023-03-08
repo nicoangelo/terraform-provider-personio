@@ -8,35 +8,49 @@ import (
 )
 
 type Employee struct {
-	Id                 types.Int64   `tfsdk:"id"`
-	FirstName          types.String  `tfsdk:"first_name"`
-	LastName           types.String  `tfsdk:"last_name"`
-	CreatedAt          types.String  `tfsdk:"created_at"`
+	Id        types.Int64  `tfsdk:"id"`
+	Email     types.String `tfsdk:"email"`
+	FirstName types.String `tfsdk:"first_name"`
+	LastName  types.String `tfsdk:"last_name"`
+	Status    types.String `tfsdk:"status"`
+
+	CreatedAt      types.String `tfsdk:"created_at"`
+	LastModifiedAt types.String `tfsdk:"last_modified_at"`
+
+	DynamicAttributes map[string]types.String `tfsdk:"dynamic_attributes"`
+	TagAttributes     map[string][]string     `tfsdk:"tag_attributes"`
+
+	Profile    *EmployeeProfile    `tfsdk:"profile"`
+	HrInfo     *EmployeeHrData     `tfsdk:"hr_info"`
+	SalaryData *EmployeeSalaryData `tfsdk:"salary_data"`
+}
+
+type EmployeeProfile struct {
+	Gender     types.String `tfsdk:"gender"`
+	Department types.String `tfsdk:"department"`
+	Team       types.String `tfsdk:"team"`
+	Subcompany types.String `tfsdk:"subcompany"`
+	Supervisor *Supervisor  `tfsdk:"supervisor"`
+}
+
+type EmployeeHrData struct {
 	ContractEndDate    types.String  `tfsdk:"contract_end_date"`
-	Department         types.String  `tfsdk:"department"`
-	Email              types.String  `tfsdk:"email"`
 	EmploymentType     types.String  `tfsdk:"employment_type"`
-	FixSalary          types.Float64 `tfsdk:"fix_salary"`
-	FixSalaryInterval  types.String  `tfsdk:"fix_salary_interval"`
-	HourlySalary       types.Float64 `tfsdk:"hourly_salary"`
-	Gender             types.String  `tfsdk:"gender"`
 	HireDate           types.String  `tfsdk:"hire_date"`
-	LastModifiedAt     types.String  `tfsdk:"last_modified_at"`
 	LastWorkingDay     types.String  `tfsdk:"last_working_day"`
 	Position           types.String  `tfsdk:"position"`
 	ProbationPeriodEnd types.String  `tfsdk:"probation_period_end"`
-	Status             types.String  `tfsdk:"status"`
-	Subcompany         types.String  `tfsdk:"subcompany"`
-	Supervisor         *Supervisor   `tfsdk:"supervisor"`
-	Team               types.String  `tfsdk:"team"`
 	TerminationDate    types.String  `tfsdk:"termination_date"`
 	TerminationReason  types.String  `tfsdk:"termination_reason"`
 	TerminationType    types.String  `tfsdk:"termination_type"`
 	VacationDayBalance types.Float64 `tfsdk:"vacation_day_balance"`
 	WeeklyWorkingHours types.Float64 `tfsdk:"weekly_working_hours"`
+}
 
-	DynamicAttributes map[string]types.String `tfsdk:"dynamic_attributes"`
-	TagAttributes     map[string][]string     `tfsdk:"tag_attributes"`
+type EmployeeSalaryData struct {
+	FixSalary         types.Float64 `tfsdk:"fix_salary"`
+	FixSalaryInterval types.String  `tfsdk:"fix_salary_interval"`
+	HourlySalary      types.Float64 `tfsdk:"hourly_salary"`
 }
 
 type Supervisor struct {
@@ -48,35 +62,37 @@ type Supervisor struct {
 
 func NewEmployee(pe *personio.Employee) (e Employee) {
 	e.Id = convertAttrToInt(pe.Attributes["id"])
-
+	e.Email = convertAttrToString(pe.Attributes["email"])
+	e.FirstName = convertAttrToString(pe.Attributes["first_name"])
+	e.LastName = convertAttrToString(pe.Attributes["last_name"])
+	e.Status = convertAttrToString(pe.Attributes["status"])
 	e.CreatedAt = convertAttrToDateString(pe.Attributes["created_at"])
 	e.LastModifiedAt = convertAttrToDateString(pe.Attributes["last_modified_at"])
 
-	e.FirstName = convertAttrToString(pe.Attributes["first_name"])
-	e.LastName = convertAttrToString(pe.Attributes["last_name"])
-	e.Gender = convertAttrToString(pe.Attributes["gender"])
-	e.Email = convertAttrToString(pe.Attributes["email"])
-	e.Status = convertAttrToString(pe.Attributes["status"])
-	e.EmploymentType = convertAttrToString(pe.Attributes["employment_type"])
-	e.Position = convertAttrToString(pe.Attributes["position"])
-	e.Subcompany = convertAttrToString(pe.Attributes["subcompany"])
-	e.Department = convertMapItemToString(pe.Attributes["department"], "name")
-	e.Team = convertMapItemToString(pe.Attributes["team"], "name")
-	e.Supervisor = convertSupervisor(pe.Attributes["supervisor"])
-
-	e.HireDate = convertAttrToDateString(pe.Attributes["hire_date"])
-	e.ProbationPeriodEnd = convertAttrToDateString(pe.Attributes["probation_period_end"])
-	e.ContractEndDate = convertAttrToDateString(pe.Attributes["contract_end_date"])
-	e.LastWorkingDay = convertAttrToDateString(pe.Attributes["last_working_day"])
-	e.TerminationDate = convertAttrToDateString(pe.Attributes["termination_date"])
-	e.TerminationReason = convertAttrToString(pe.Attributes["termination_reason"])
-	e.TerminationType = convertAttrToString(pe.Attributes["termination_type"])
-
-	e.FixSalary = convertAttrToFloat(pe.Attributes["fix_salary"])
-	e.FixSalaryInterval = convertAttrToString(pe.Attributes["fix_salary_interval"])
-	e.HourlySalary = convertAttrToFloat(pe.Attributes["hourly_salary"])
-	e.VacationDayBalance = convertAttrToFloat(pe.Attributes["vacation_day_balance"])
-	e.WeeklyWorkingHours = convertAttrToFloat(pe.Attributes["weekly_working_hours"])
+	e.HrInfo = &EmployeeHrData{
+		EmploymentType:     convertAttrToString(pe.Attributes["employment_type"]),
+		Position:           convertAttrToString(pe.Attributes["position"]),
+		HireDate:           convertAttrToDateString(pe.Attributes["hire_date"]),
+		ProbationPeriodEnd: convertAttrToDateString(pe.Attributes["probation_period_end"]),
+		ContractEndDate:    convertAttrToDateString(pe.Attributes["contract_end_date"]),
+		LastWorkingDay:     convertAttrToDateString(pe.Attributes["last_working_day"]),
+		TerminationDate:    convertAttrToDateString(pe.Attributes["termination_date"]),
+		TerminationReason:  convertAttrToString(pe.Attributes["termination_reason"]),
+		TerminationType:    convertAttrToString(pe.Attributes["termination_type"]),
+		VacationDayBalance: convertAttrToFloat(pe.Attributes["vacation_day_balance"]),
+		WeeklyWorkingHours: convertAttrToFloat(pe.Attributes["weekly_working_hours"])}
+	e.SalaryData = &EmployeeSalaryData{
+		FixSalary:         convertAttrToFloat(pe.Attributes["fix_salary"]),
+		FixSalaryInterval: convertAttrToString(pe.Attributes["fix_salary_interval"]),
+		HourlySalary:      convertAttrToFloat(pe.Attributes["hourly_salary"]),
+	}
+	e.Profile = &EmployeeProfile{
+		Gender:     convertAttrToString(pe.Attributes["gender"]),
+		Subcompany: convertAttrToString(pe.Attributes["subcompany"]),
+		Department: convertMapItemToString(pe.Attributes["department"], "name"),
+		Team:       convertMapItemToString(pe.Attributes["team"], "name"),
+		Supervisor: convertSupervisor(pe.Attributes["supervisor"]),
+	}
 
 	e.DynamicAttributes = map[string]types.String{}
 	e.TagAttributes = map[string][]string{}

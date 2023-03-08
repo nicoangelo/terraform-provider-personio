@@ -111,7 +111,7 @@ var (
 		},
 	}
 
-	otherEmployeeAttributes = map[string]schema.Attribute{
+	employeeRootAttributes = map[string]schema.Attribute{
 		"created_at": schema.StringAttribute{
 			Description: "Creation date of the employee record",
 			Computed:    true,
@@ -140,8 +140,23 @@ var (
 			Attributes:  basicEmployeeAttributes,
 			Description: "Supervisor of the employee",
 			Computed:    true,
+		},
+		"profile": schema.SingleNestedAttribute{
+			Attributes:  profileAttributes,
+			Description: "Public profile attributes of an employee",
+			Computed:    true,
+		},
+		"hr_info": schema.SingleNestedAttribute{
+			Attributes:  hrAttributes,
+			Description: "HR Information about the employee",
+			Computed:    true,
+		},
+		"salary_data": schema.SingleNestedAttribute{
+			Attributes:  salaryAttributes,
+			Description: "Salary data of the employee",
+			Computed:    true,
 		}}
-	employeeAttributes = utils.MergeMaps(basicEmployeeAttributes, hrAttributes, profileAttributes, salaryAttributes, otherEmployeeAttributes)
+	employeeAttributes = utils.MergeMaps(basicEmployeeAttributes, employeeRootAttributes)
 )
 
 func NewEmployeesDataSource() datasource.DataSource {
