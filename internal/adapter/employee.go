@@ -32,6 +32,14 @@ type EmployeeProfile struct {
 	Supervisor *Supervisor  `tfsdk:"supervisor"`
 }
 
+func (e EmployeeProfile) AllNull() bool {
+	return e.Gender.IsNull() &&
+		e.Department.IsNull() &&
+		e.Team.IsNull() &&
+		e.Subcompany.IsNull() &&
+		e.Supervisor.AllNull()
+}
+
 type EmployeeHrData struct {
 	ContractEndDate    types.String  `tfsdk:"contract_end_date"`
 	EmploymentType     types.String  `tfsdk:"employment_type"`
@@ -46,10 +54,30 @@ type EmployeeHrData struct {
 	WeeklyWorkingHours types.Float64 `tfsdk:"weekly_working_hours"`
 }
 
+func (e EmployeeHrData) AllNull() bool {
+	return e.ContractEndDate.IsNull() &&
+		e.EmploymentType.IsNull() &&
+		e.HireDate.IsNull() &&
+		e.LastWorkingDay.IsNull() &&
+		e.Position.IsNull() &&
+		e.ProbationPeriodEnd.IsNull() &&
+		e.TerminationDate.IsNull() &&
+		e.TerminationReason.IsNull() &&
+		e.TerminationType.IsNull() &&
+		e.VacationDayBalance.IsNull() &&
+		e.WeeklyWorkingHours.IsNull()
+}
+
 type EmployeeSalaryData struct {
 	FixSalary         types.Float64 `tfsdk:"fix_salary"`
 	FixSalaryInterval types.String  `tfsdk:"fix_salary_interval"`
 	HourlySalary      types.Float64 `tfsdk:"hourly_salary"`
+}
+
+func (e EmployeeSalaryData) AllNull() bool {
+	return e.FixSalary.IsNull() &&
+		e.FixSalaryInterval.IsNull() &&
+		e.HourlySalary.IsNull()
 }
 
 type Supervisor struct {
@@ -57,6 +85,13 @@ type Supervisor struct {
 	Email     types.String `tfsdk:"email"`
 	FirstName types.String `tfsdk:"first_name"`
 	LastName  types.String `tfsdk:"last_name"`
+}
+
+func (s Supervisor) AllNull() bool {
+	return s.Id.IsNull() &&
+		s.Email.IsNull() &&
+		s.FirstName.IsNull() &&
+		s.LastName.IsNull()
 }
 
 func NewEmployee(pe *personio.Employee) (e Employee) {
@@ -68,31 +103,9 @@ func NewEmployee(pe *personio.Employee) (e Employee) {
 	e.CreatedAt = convertAttrToDateString(pe.Attributes["created_at"])
 	e.LastModifiedAt = convertAttrToDateString(pe.Attributes["last_modified_at"])
 
-	e.HrInfo = &EmployeeHrData{
-		EmploymentType:     convertAttrToString(pe.Attributes["employment_type"]),
-		Position:           convertAttrToString(pe.Attributes["position"]),
-		HireDate:           convertAttrToDateString(pe.Attributes["hire_date"]),
-		ProbationPeriodEnd: convertAttrToDateString(pe.Attributes["probation_period_end"]),
-		ContractEndDate:    convertAttrToDateString(pe.Attributes["contract_end_date"]),
-		LastWorkingDay:     convertAttrToDateString(pe.Attributes["last_working_day"]),
-		TerminationDate:    convertAttrToDateString(pe.Attributes["termination_date"]),
-		TerminationReason:  convertAttrToString(pe.Attributes["termination_reason"]),
-		TerminationType:    convertAttrToString(pe.Attributes["termination_type"]),
-		VacationDayBalance: convertAttrToFloat(pe.Attributes["vacation_day_balance"]),
-		WeeklyWorkingHours: convertAttrToFloat(pe.Attributes["weekly_working_hours"])}
-	e.SalaryData = &EmployeeSalaryData{
-		FixSalary:         convertAttrToFloat(pe.Attributes["fix_salary"]),
-		FixSalaryInterval: convertAttrToString(pe.Attributes["fix_salary_interval"]),
-		HourlySalary:      convertAttrToFloat(pe.Attributes["hourly_salary"]),
-	}
-	e.Profile = &EmployeeProfile{
-		Gender:     convertAttrToString(pe.Attributes["gender"]),
-		Subcompany: convertAttrToString(pe.Attributes["subcompany"]),
-		Department: convertMapItemToString(pe.Attributes["department"], "name"),
-		Team:       convertMapItemToString(pe.Attributes["team"], "name"),
-		Supervisor: convertSupervisor(pe.Attributes["supervisor"]),
-	}
-
+	e.HrInfo = convertHrData(pe.Attributes)
+	e.SalaryData = convertSalaryData(pe.Attributes)
+	e.Profile = convertProfile(pe.Attributes)
 	e.DynamicAttributes = map[string]types.String{}
 	e.TagAttributes = map[string][]types.String{}
 
@@ -108,6 +121,51 @@ func NewEmployee(pe *personio.Employee) (e Employee) {
 
 	}
 	return e
+}
+
+func convertSalaryData(attrs map[string]personio.Attribute) *EmployeeSalaryData {
+	sd := &EmployeeSalaryData{
+		FixSalary:         convertAttrToFloat(attrs["fix_salary"]),
+		FixSalaryInterval: convertAttrToString(attrs["fix_salary_interval"]),
+		HourlySalary:      convertAttrToFloat(attrs["hourly_salary"]),
+	}
+	if sd.AllNull() {
+		return nil
+	}
+	return sd
+}
+
+func convertHrData(attrs map[string]personio.Attribute) *EmployeeHrData {
+	hr := &EmployeeHrData{
+		EmploymentType:     convertAttrToString(attrs["employment_type"]),
+		Position:           convertAttrToString(attrs["position"]),
+		HireDate:           convertAttrToDateString(attrs["hire_date"]),
+		ProbationPeriodEnd: convertAttrToDateString(attrs["probation_period_end"]),
+		ContractEndDate:    convertAttrToDateString(attrs["contract_end_date"]),
+		LastWorkingDay:     convertAttrToDateString(attrs["last_working_day"]),
+		TerminationDate:    convertAttrToDateString(attrs["termination_date"]),
+		TerminationReason:  convertAttrToString(attrs["termination_reason"]),
+		TerminationType:    convertAttrToString(attrs["termination_type"]),
+		VacationDayBalance: convertAttrToFloat(attrs["vacation_day_balance"]),
+		WeeklyWorkingHours: convertAttrToFloat(attrs["weekly_working_hours"])}
+	if hr.AllNull() {
+		return nil
+	}
+	return hr
+}
+
+func convertProfile(attrs map[string]personio.Attribute) *EmployeeProfile {
+	p := &EmployeeProfile{
+		Gender:     convertAttrToString(attrs["gender"]),
+		Subcompany: convertAttrToString(attrs["subcompany"]),
+		Department: convertMapItemToString(attrs["department"], "name"),
+		Team:       convertMapItemToString(attrs["team"], "name"),
+		Supervisor: convertSupervisor(attrs["supervisor"]),
+	}
+	if p.AllNull() {
+		return nil
+	}
+	return p
 }
 
 func convertSupervisor(v personio.Attribute) *Supervisor {
