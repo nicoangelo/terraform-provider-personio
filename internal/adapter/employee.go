@@ -17,12 +17,11 @@ type Employee struct {
 	CreatedAt      types.String `tfsdk:"created_at"`
 	LastModifiedAt types.String `tfsdk:"last_modified_at"`
 
-	DynamicAttributes map[string]types.String `tfsdk:"dynamic_attributes"`
-	TagAttributes     map[string][]string     `tfsdk:"tag_attributes"`
-
-	Profile    *EmployeeProfile    `tfsdk:"profile"`
-	HrInfo     *EmployeeHrData     `tfsdk:"hr_info"`
-	SalaryData *EmployeeSalaryData `tfsdk:"salary_data"`
+	Profile           *EmployeeProfile          `tfsdk:"profile"`
+	HrInfo            *EmployeeHrData           `tfsdk:"hr_info"`
+	SalaryData        *EmployeeSalaryData       `tfsdk:"salary_data"`
+	DynamicAttributes map[string]types.String   `tfsdk:"dynamic_attributes"`
+	TagAttributes     map[string][]types.String `tfsdk:"tag_attributes"`
 }
 
 type EmployeeProfile struct {
@@ -95,7 +94,7 @@ func NewEmployee(pe *personio.Employee) (e Employee) {
 	}
 
 	e.DynamicAttributes = map[string]types.String{}
-	e.TagAttributes = map[string][]string{}
+	e.TagAttributes = map[string][]types.String{}
 
 	for k, v := range pe.Attributes {
 		if !strings.HasPrefix(k, "dynamic_") {

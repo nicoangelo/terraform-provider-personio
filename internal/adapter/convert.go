@@ -39,15 +39,19 @@ func convertAnyAttrToString(v personio.Attribute) types.String {
 	return types.StringNull()
 }
 
-func convertTagsToStrings(v personio.Attribute) []string {
+func convertTagsToStrings(v personio.Attribute) (res []types.String) {
 	if v.Value == nil {
-		return []string{}
+		return []types.String{}
 	}
 	strValue, ok := v.Value.(string)
 	if ok {
-		return strings.Split(strValue, ",")
+		res = make([]types.String, 0)
+		for _, v := range strings.Split(strValue, ",") {
+			res = append(res, types.StringValue(v))
+		}
+		return res
 	}
-	return []string{}
+	return []types.String{}
 }
 
 // convertAttrToString converts any standard, multiline, link, list API value
