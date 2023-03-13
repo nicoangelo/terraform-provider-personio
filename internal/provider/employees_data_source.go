@@ -44,27 +44,7 @@ Employees data source
 Retrieves all employees and their attributes. The set of attributes that have a non-null value
 is defined by the configuration of the API credential in Personio ("Readable employee attributes").
 
-Certain attributes are preset and are always returned by this data source. These attributes cannot be removed or changed
-in the Personio Admin interface. If an attribute is not configured as a readable attribute of the API credential,
-its value will be ` + "`null`" + `. See attributes described as "preset"
-[in the Personio documentation](https://support.personio.de/hc/en-us/articles/115002250165-Best-Practice-Sections-and-Attributes).
-
-Dynamic attributes can be configured per tenant, and may have different types. All of them are converted to a
-string representation in Terraform.
-Currently supported Personio API data types with their conversions are
-* integer/decimal -> number
-* date -> RFC3339 formatted string in UTC timezone
-* links -> string
-* standard -> string
-* multiline -> string
-
-Tag attributes are converted to a list of strings.
-
-## Limitations
-
-- All dynamic employee attributes are converted to strings. This is due to employee attributes being
-  different for each tenant. Dynamic attributes on map values are not supported out of the box by Terraform.
-- Time attributes are returned in UTC timezone.
+For more information on limitations and output conversion, see employees_data_source.
 `,
 		Attributes: map[string]schema.Attribute{
 			"employees": schema.ListNestedAttribute{

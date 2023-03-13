@@ -36,3 +36,10 @@ func (p *PersonioAdapter) GetEmployees() (employees []Employee, err error) {
 	}
 	return employees, nil
 }
+func (p *PersonioAdapter) GetEmployee(id int64) (employee Employee, err error) {
+	pe, err := p.Client.GetEmployee(id)
+	if err != nil {
+		return employee, err
+	}
+	return NewEmployee(pe), nil
+}
