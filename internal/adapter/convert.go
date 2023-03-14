@@ -128,9 +128,9 @@ func convertMapItemToInt(v personio.Attribute, itemKey string) types.Int64 {
 		return types.Int64Null()
 	}
 	mapVal := v.GetMapValue()
-	intVal, ok := mapVal[itemKey].(int64)
+	intVal, ok := mapVal[itemKey].(float64)
 	if ok {
-		return types.Int64Value(intVal)
+		return types.Int64Value(int64(intVal))
 	}
 	return types.Int64Null()
 }

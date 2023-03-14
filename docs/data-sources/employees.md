@@ -79,10 +79,12 @@ Read-Only:
 Read-Only:
 
 - `department` (String) Department name
+- `department_id` (Number) Department ID
 - `gender` (String) Gender
 - `subcompany` (String) Subcompany
 - `supervisor` (Attributes) Supervisor of the employee (see [below for nested schema](#nestedatt--employees--profile--supervisor))
 - `team` (String) Team name
+- `team_id` (Number) Team ID
 
 <a id="nestedatt--employees--profile--supervisor"></a>
 ### Nested Schema for `employees.profile.supervisor`

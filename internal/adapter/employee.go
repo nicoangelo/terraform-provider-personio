@@ -25,17 +25,21 @@ type Employee struct {
 }
 
 type EmployeeProfile struct {
-	Gender     types.String `tfsdk:"gender"`
-	Department types.String `tfsdk:"department"`
-	Team       types.String `tfsdk:"team"`
-	Subcompany types.String `tfsdk:"subcompany"`
-	Supervisor *Supervisor  `tfsdk:"supervisor"`
+	Gender       types.String `tfsdk:"gender"`
+	Department   types.String `tfsdk:"department"`
+	DepartmentId types.Int64  `tfsdk:"department_id"`
+	Team         types.String `tfsdk:"team"`
+	TeamId       types.Int64  `tfsdk:"team_id"`
+	Subcompany   types.String `tfsdk:"subcompany"`
+	Supervisor   *Supervisor  `tfsdk:"supervisor"`
 }
 
 func (e EmployeeProfile) AllNull() bool {
 	return e.Gender.IsNull() &&
 		e.Department.IsNull() &&
+		e.DepartmentId.IsNull() &&
 		e.Team.IsNull() &&
+		e.TeamId.IsNull() &&
 		e.Subcompany.IsNull() &&
 		e.Supervisor.AllNull()
 }
@@ -156,11 +160,13 @@ func convertHrData(attrs map[string]personio.Attribute) *EmployeeHrData {
 
 func convertProfile(attrs map[string]personio.Attribute) *EmployeeProfile {
 	p := &EmployeeProfile{
-		Gender:     convertAttrToString(attrs["gender"]),
-		Subcompany: convertAttrToString(attrs["subcompany"]),
-		Department: convertMapItemToString(attrs["department"], "name"),
-		Team:       convertMapItemToString(attrs["team"], "name"),
-		Supervisor: convertSupervisor(attrs["supervisor"]),
+		Gender:       convertAttrToString(attrs["gender"]),
+		Subcompany:   convertAttrToString(attrs["subcompany"]),
+		Department:   convertMapItemToString(attrs["department"], "name"),
+		DepartmentId: convertMapItemToInt(attrs["department"], "id"),
+		Team:         convertMapItemToString(attrs["team"], "name"),
+		TeamId:       convertMapItemToInt(attrs["team"], "id"),
+		Supervisor:   convertSupervisor(attrs["supervisor"]),
 	}
 	if p.AllNull() {
 		return nil
