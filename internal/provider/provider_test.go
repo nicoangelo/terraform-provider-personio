@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"net/http"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
@@ -20,14 +19,4 @@ func testAccPreCheck(t *testing.T) {
 	// You can add code here to run prior to any test case execution, for example assertions
 	// about the appropriate environment variables being set are common to see in a pre-check
 	// function.
-}
-
-func serveLocalApiServer() {
-
-}
-
-func handleGetEmployees(w http.ResponseWriter, r *http.Request) {
-
-	http.HandleFunc("/employees", handleGetEmployees)
-	http.ListenAndServe("127.0.0.1:8080", nil)
 }
