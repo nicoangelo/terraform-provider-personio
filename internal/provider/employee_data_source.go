@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/nicoangelo/terraform-provider-personio/internal/adapter"
 	"github.com/nicoangelo/terraform-provider-personio/internal/utils"
 )
@@ -26,11 +25,7 @@ type EmployeeDataSource struct {
 }
 
 // EmployeeDataSourceModel describes the data source data model.
-type EmployeeDataSourceModel struct {
-	Employee   *adapter.Employee `tfsdk:"employee"`
-	EmployeeId types.Int64       `tfsdk:"employee_id"`
-	Id         types.String      `tfsdk:"id"`
-}
+type EmployeeDataSourceModel = *adapter.Employee
 
 func (d *EmployeeDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_employee"
@@ -63,25 +58,11 @@ Tag attributes are converted to a list of strings.
 
 ## Limitations
 
-- All dynamic employee attributes are converted to strings. This is due to employee attributes being
+- All *dynamic* employee attributes are converted to strings. This is due to employee attributes being
   different for each tenant. Dynamic attributes on map values are not supported out of the box by Terraform.
 - Time attributes are returned in UTC timezone.
 `,
-		Attributes: map[string]schema.Attribute{
-			"employee": schema.SingleNestedAttribute{
-				MarkdownDescription: "List of employee and their attributes.",
-				Computed:            true,
-				Attributes:          employeeAttributes,
-			},
-			"employee_id": schema.Int64Attribute{
-				MarkdownDescription: "Personio ID of the employee to fetch.",
-				Required:            true,
-			},
-			"id": schema.StringAttribute{
-				MarkdownDescription: "Identifier",
-				Computed:            true,
-			},
-		},
+		Attributes: utils.ReplaceAttribute(employeeAttributes, "id", employeeIdRequired),
 	}
 }
 
@@ -113,7 +94,7 @@ func (d *EmployeeDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
-	id := data.EmployeeId.ValueInt64()
+	id, _ := data.Id.ValueBigFloat().Int64()
 
 	employee, err := d.client.GetEmployee(id)
 	if err != nil {
@@ -121,8 +102,7 @@ func (d *EmployeeDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
-	data.Employee = &employee
-	data.Id = utils.GetUnstableId("personio_employee-")
+	data = &employee
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

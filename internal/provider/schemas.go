@@ -7,11 +7,16 @@ import (
 )
 
 var (
+	employeeIdRequired = schema.NumberAttribute{
+		Description: "Personio Employee ID",
+		Required:    true,
+	}
+	employeeIdComputed = schema.NumberAttribute{
+		Description: "Personio Employee ID",
+		Computed:    true,
+	}
 	basicEmployeeAttributes = map[string]schema.Attribute{
-		"id": schema.NumberAttribute{
-			Description: "Personio Employee ID",
-			Computed:    true,
-		},
+		"id": employeeIdComputed,
 		"email": schema.StringAttribute{
 			Description: "Email address of the employee",
 			Computed:    true,

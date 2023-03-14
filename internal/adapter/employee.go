@@ -8,7 +8,7 @@ import (
 )
 
 type Employee struct {
-	Id        types.Int64  `tfsdk:"id"`
+	Id        types.Number `tfsdk:"id"`
 	Email     types.String `tfsdk:"email"`
 	FirstName types.String `tfsdk:"first_name"`
 	LastName  types.String `tfsdk:"last_name"`
@@ -95,7 +95,7 @@ func (s Supervisor) AllNull() bool {
 }
 
 func NewEmployee(pe *personio.Employee) (e Employee) {
-	e.Id = convertAttrToInt(pe.Attributes["id"])
+	e.Id = convertAttrToNumber(pe.Attributes["id"])
 	e.Email = convertAttrToString(pe.Attributes["email"])
 	e.FirstName = convertAttrToString(pe.Attributes["first_name"])
 	e.LastName = convertAttrToString(pe.Attributes["last_name"])
