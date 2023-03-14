@@ -53,12 +53,20 @@ var (
 			Description: "Department name",
 			Computed:    true,
 		},
+		"department_id": schema.Int64Attribute{
+			Description: "Department ID",
+			Computed:    true,
+		},
 		"subcompany": schema.StringAttribute{
 			Description: "Subcompany",
 			Computed:    true,
 		},
 		"team": schema.StringAttribute{
 			Description: "Team name",
+			Computed:    true,
+		},
+		"team_id": schema.Int64Attribute{
+			Description: "Team ID",
 			Computed:    true,
 		},
 		"supervisor": schema.SingleNestedAttribute{
