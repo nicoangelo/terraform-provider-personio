@@ -2,6 +2,7 @@ package adapter
 
 import (
 	"fmt"
+	"math/big"
 	"strings"
 	"time"
 
@@ -39,15 +40,19 @@ func convertAnyAttrToString(v personio.Attribute) types.String {
 	return types.StringNull()
 }
 
-func convertTagsToStrings(v personio.Attribute) []string {
+func convertTagsToStrings(v personio.Attribute) (res []types.String) {
 	if v.Value == nil {
-		return []string{}
+		return []types.String{}
 	}
 	strValue, ok := v.Value.(string)
 	if ok {
-		return strings.Split(strValue, ",")
+		res = make([]types.String, 0)
+		for _, v := range strings.Split(strValue, ",") {
+			res = append(res, types.StringValue(v))
+		}
+		return res
 	}
-	return []string{}
+	return []types.String{}
 }
 
 // convertAttrToString converts any standard, multiline, link, list API value
@@ -63,20 +68,20 @@ func convertAttrToString(v personio.Attribute) types.String {
 	return types.StringNull()
 }
 
-// convertPersonioAttrToString converts an integer API value
+// convertAttrToNumber converts an integer API value
 // to a Terraform Int64 value. If the value is null, types.Int64Null is returned.
-func convertAttrToInt(v personio.Attribute) types.Int64 {
+func convertAttrToNumber(v personio.Attribute) types.Number {
 	if v.Value == nil {
-		return types.Int64Null()
+		return types.NumberNull()
 	}
 	intVal, ok := v.Value.(float64)
 	if ok {
-		return types.Int64Value(int64(intVal))
+		return types.NumberValue(big.NewFloat(intVal))
 	}
-	return types.Int64Null()
+	return types.NumberNull()
 }
 
-// convertPersonioAttrToString converts a decimal API value
+// convertAttrToFloat converts a decimal API value
 // to a Terraform Float64 value. If the value is null, types.Float64Null is returned.
 func convertAttrToFloat(v personio.Attribute) types.Float64 {
 	if v.Value == nil {

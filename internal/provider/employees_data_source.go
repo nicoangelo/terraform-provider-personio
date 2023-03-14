@@ -14,134 +14,6 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces
 var (
 	_ datasource.DataSource = &EmployeesDataSource{}
-
-	basicEmployeeAttributes = map[string]schema.Attribute{
-		"id": schema.NumberAttribute{
-			Description: "Personio Employee ID",
-			Computed:    true,
-		},
-		"email": schema.StringAttribute{
-			Description: "Email address of the employee",
-			Computed:    true,
-		},
-		"first_name": schema.StringAttribute{
-			Description: "First name",
-			Computed:    true,
-		},
-		"last_name": schema.StringAttribute{
-			Description: "Last name",
-			Computed:    true,
-		},
-	}
-
-	salaryAttributes = map[string]schema.Attribute{
-		"fix_salary": schema.Float64Attribute{
-			Description: "Fixed salary amount",
-			Computed:    true,
-		},
-		"fix_salary_interval": schema.StringAttribute{
-			Description: "Fixed salary interval",
-			Computed:    true,
-		},
-		"hourly_salary": schema.Float64Attribute{
-			Description: "Hourly salary amount",
-			Computed:    true,
-		}}
-	profileAttributes = map[string]schema.Attribute{
-		"gender": schema.StringAttribute{
-			Description: "Gender",
-			Computed:    true,
-		},
-		"department": schema.StringAttribute{
-			Description: "Department name",
-			Computed:    true,
-		},
-		"subcompany": schema.StringAttribute{
-			Description: "Subcompany",
-			Computed:    true,
-		},
-		"team": schema.StringAttribute{
-			Description: "Team name",
-			Computed:    true,
-		}}
-	hrAttributes = map[string]schema.Attribute{
-		"contract_end_date": schema.StringAttribute{
-			Description: "Creation date of the employee record",
-			Computed:    true,
-		},
-		"employment_type": schema.StringAttribute{
-			Description: "Employment type (`internal` or `external`)",
-			Computed:    true,
-		},
-		"hire_date": schema.StringAttribute{
-			Description: "Hire date",
-			Computed:    true,
-		},
-		"last_working_day": schema.StringAttribute{
-			Description: "Last working day of employee",
-			Computed:    true,
-		},
-		"position": schema.StringAttribute{
-			Description: "Position of employee",
-			Computed:    true,
-		},
-		"probation_period_end": schema.StringAttribute{
-			Description: "End of probation period",
-			Computed:    true,
-		},
-		"termination_date": schema.StringAttribute{
-			Description: "Termination date",
-			Computed:    true,
-		},
-		"termination_reason": schema.StringAttribute{
-			Description: "Termination date",
-			Computed:    true,
-		},
-		"termination_type": schema.StringAttribute{
-			Description: "Termination date",
-			Computed:    true,
-		},
-		"vacation_day_balance": schema.Float64Attribute{
-			Description: "Vacation day balance",
-			Computed:    true,
-		},
-		"weekly_working_hours": schema.Float64Attribute{
-			Description: "Weekly working hours",
-			Computed:    true,
-		},
-	}
-
-	otherEmployeeAttributes = map[string]schema.Attribute{
-		"created_at": schema.StringAttribute{
-			Description: "Creation date of the employee record",
-			Computed:    true,
-		},
-		"last_modified_at": schema.StringAttribute{
-			Description: "Last modification date of employee record",
-			Computed:    true,
-		},
-		"status": schema.StringAttribute{
-			Description: "Status of the employee (active,...)",
-			Computed:    true,
-		},
-		"dynamic_attributes": schema.MapAttribute{
-			Description: "Additional dynamic attributes of the employee.",
-			ElementType: types.StringType,
-			Computed:    true,
-		},
-		"tag_attributes": schema.MapAttribute{
-			Description: "Attributes of the employee that are stored as multi-select from a predefined list.",
-			ElementType: types.SetType{
-				ElemType: types.StringType,
-			},
-			Computed: true,
-		},
-		"supervisor": schema.SingleNestedAttribute{
-			Attributes:  basicEmployeeAttributes,
-			Description: "Supervisor of the employee",
-			Computed:    true,
-		}}
-	employeeAttributes = utils.MergeMaps(basicEmployeeAttributes, hrAttributes, profileAttributes, salaryAttributes, otherEmployeeAttributes)
 )
 
 func NewEmployeesDataSource() datasource.DataSource {
@@ -172,27 +44,7 @@ Employees data source
 Retrieves all employees and their attributes. The set of attributes that have a non-null value
 is defined by the configuration of the API credential in Personio ("Readable employee attributes").
 
-Certain attributes are preset and are always returned by this data source. These attributes cannot be removed or changed
-in the Personio Admin interface. If an attribute is not configured as a readable attribute of the API credential,
-its value will be ` + "`null`" + `. See attributes described as "preset"
-[in the Personio documentation](https://support.personio.de/hc/en-us/articles/115002250165-Best-Practice-Sections-and-Attributes).
-
-Dynamic attributes can be configured per tenant, and may have different types. All of them are converted to a
-string representation in Terraform.
-Currently supported Personio API data types with their conversions are
-* integer/decimal -> number
-* date -> RFC3339 formatted string in UTC timezone
-* links -> string
-* standard -> string
-* multiline -> string
-
-Tag attributes are converted to a list of strings.
-
-## Limitations
-
-- All dynamic employee attributes are converted to strings. This is due to employee attributes being
-  different for each tenant. Dynamic attributes on map values are not supported out of the box by Terraform.
-- Time attributes are returned in UTC timezone.
+For more information on limitations and output conversion, see [personio_employee data source](./employee).
 `,
 		Attributes: map[string]schema.Attribute{
 			"employees": schema.ListNestedAttribute{
@@ -223,7 +75,6 @@ func (d *EmployeesDataSource) Configure(ctx context.Context, req datasource.Conf
 			"Unexpected Data Source Configure Type",
 			fmt.Sprintf("Expected *adapter.PersonioAdapter, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
-
 		return
 	}
 
