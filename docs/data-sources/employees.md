@@ -6,7 +6,7 @@ description: |-
   Employees data source
   Retrieves all employees and their attributes. The set of attributes that have a non-null value
   is defined by the configuration of the API credential in Personio ("Readable employee attributes").
-  For more information on limitations and output conversion, see employeesdatasource.
+  For more information on limitations and output conversion, see personio_employee data source ./employee.
 ---
 
 # personio_employees (Data Source)
@@ -16,7 +16,7 @@ Employees data source
 Retrieves all employees and their attributes. The set of attributes that have a non-null value
 is defined by the configuration of the API credential in Personio ("Readable employee attributes").
 
-For more information on limitations and output conversion, see employees_data_source.
+For more information on limitations and output conversion, see [personio_employee data source](./employee).
 
 ## Example Usage
 
