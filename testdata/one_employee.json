@@ -1,0 +1,394 @@
+{
+    "success": true,
+    "data": {
+      "type": "Employee",
+      "attributes": {
+        "id": {
+          "label": "ID",
+          "value": 13649297,
+          "type": "integer",
+          "universal_id": "id"
+        },
+        "first_name": {
+          "label": "First name",
+          "value": "Nicolas",
+          "type": "standard",
+          "universal_id": "first_name"
+        },
+        "last_name": {
+          "label": "Last name",
+          "value": "Angelo",
+          "type": "standard",
+          "universal_id": "last_name"
+        },
+        "email": {
+          "label": "Email",
+          "value": "na@example.com",
+          "type": "standard",
+          "universal_id": "email"
+        },
+        "gender": {
+          "label": "Gender",
+          "value": "",
+          "type": "standard",
+          "universal_id": "gender"
+        },
+        "status": {
+          "label": "Status",
+          "value": "active",
+          "type": "standard",
+          "universal_id": "status"
+        },
+        "position": {
+          "label": "Position",
+          "value": "",
+          "type": "standard",
+          "universal_id": "position"
+        },
+        "supervisor": {
+          "label": "Supervisor",
+          "value": null,
+          "type": "standard",
+          "universal_id": "supervisor"
+        },
+        "employment_type": {
+          "label": "Employment type",
+          "value": "internal",
+          "type": "standard",
+          "universal_id": "employment_type"
+        },
+        "weekly_working_hours": {
+          "label": "Weekly hours",
+          "value": "40",
+          "type": "standard",
+          "universal_id": "weekly_working_hours"
+        },
+        "hire_date": {
+          "label": "Hire date",
+          "value": null,
+          "type": "date",
+          "universal_id": "hire_date"
+        },
+        "contract_end_date": {
+          "label": "Contract ends",
+          "value": null,
+          "type": "date",
+          "universal_id": "contract_end_date"
+        },
+        "termination_date": {
+          "label": "Termination date",
+          "value": null,
+          "type": "date",
+          "universal_id": "termination_date"
+        },
+        "termination_type": {
+          "label": "Termination type",
+          "value": "",
+          "type": "standard",
+          "universal_id": "termination_type"
+        },
+        "termination_reason": {
+          "label": "Termination reason",
+          "value": "",
+          "type": "standard",
+          "universal_id": "termination_reason"
+        },
+        "probation_period_end": {
+          "label": "Probation period end",
+          "value": null,
+          "type": "date",
+          "universal_id": "probation_period_end"
+        },
+        "created_at": {
+          "label": "Created at",
+          "value": "2023-01-26T09:30:21+01:00",
+          "type": "date",
+          "universal_id": "created_at"
+        },
+        "last_modified_at": {
+          "label": "Last modified",
+          "value": "2023-03-08T23:26:48+01:00",
+          "type": "date",
+          "universal_id": "last_modified_at"
+        },
+        "subcompany": {
+          "label": "Subcompany",
+          "value": null,
+          "type": "standard",
+          "universal_id": "subcompany"
+        },
+        "office": {
+          "label": "Office",
+          "value": null,
+          "type": "standard",
+          "universal_id": "office"
+        },
+        "department": {
+          "label": "Department",
+          "value": {
+            "type": "Department",
+            "attributes": {
+              "id": 4090747,
+              "name": "IT"
+            }
+          },
+          "type": "standard",
+          "universal_id": "department"
+        },
+        "cost_centers": {
+          "label": "Cost center",
+          "value": [],
+          "type": "standard",
+          "universal_id": "cost_centers"
+        },
+        "holiday_calendar": {
+          "label": "Public holidays",
+          "value": {
+            "type": "HolidayCalendar",
+            "attributes": {
+              "id": 189,
+              "name": "United Kingdom public holidays",
+              "country": null,
+              "state": null
+            }
+          },
+          "type": "standard",
+          "universal_id": "holiday_calendar"
+        },
+        "absence_entitlement": {
+          "label": "Absence entitlement",
+          "value": [
+            {
+              "type": "TimeOffType",
+              "attributes": {
+                "id": 2179197,
+                "name": "Paid vacation",
+                "category": "paid_vacation",
+                "entitlement": 0
+              }
+            }
+          ],
+          "type": "standard",
+          "universal_id": "absence_entitlement"
+        },
+        "work_schedule": {
+          "label": "Work schedule",
+          "value": {
+            "type": "WorkSchedule",
+            "attributes": {
+              "id": 1067807102794692000,
+              "name": "Full-time, 40 hours without time tracking, (mon,tue,wed,thu,fri)",
+              "valid_from": null,
+              "monday": "08:00",
+              "tuesday": "08:00",
+              "wednesday": "08:00",
+              "thursday": "08:00",
+              "friday": "08:00",
+              "saturday": "00:00",
+              "sunday": "00:00"
+            }
+          },
+          "type": "standard",
+          "universal_id": "work_schedule"
+        },
+        "vacation_day_balance": {
+          "label": "Vacation day balance",
+          "value": 0,
+          "type": "decimal",
+          "universal_id": "vacation_day_balance"
+        },
+        "last_working_day": {
+          "label": "Last day of work",
+          "value": null,
+          "type": "date",
+          "universal_id": "last_working_day"
+        },
+        "profile_picture": {
+          "label": "Profile Picture",
+          "value": null,
+          "type": "standard",
+          "universal_id": "profile_picture"
+        },
+        "team": {
+          "label": "Team",
+          "value": null,
+          "type": "standard",
+          "universal_id": "team"
+        },
+        "dynamic_7123994": {
+          "label": "Employee ID",
+          "value": "",
+          "type": "standard",
+          "universal_id": null
+        },
+        "dynamic_7123995": {
+          "label": "National Insurance Number",
+          "value": "",
+          "type": "standard",
+          "universal_id": null
+        },
+        "dynamic_7124003": {
+          "label": "Holder of bank account",
+          "value": "",
+          "type": "standard",
+          "universal_id": null
+        },
+        "dynamic_7124007": {
+          "label": "Emergency contact name",
+          "value": "",
+          "type": "standard",
+          "universal_id": null
+        },
+        "dynamic_7124014": {
+          "label": "Address",
+          "value": "",
+          "type": "standard",
+          "universal_id": null
+        },
+        "dynamic_7124027": {
+          "label": "Key number / ID",
+          "value": "",
+          "type": "standard",
+          "universal_id": null
+        },
+        "dynamic_7124049": {
+          "label": "Type of Visa",
+          "value": "",
+          "type": "standard",
+          "universal_id": null
+        },
+        "dynamic_7123992": {
+          "label": "Birthday",
+          "value": null,
+          "type": "date",
+          "universal_id": "date_of_birth"
+        },
+        "dynamic_7124004": {
+          "label": "IBAN",
+          "value": "",
+          "type": "standard",
+          "universal_id": null
+        },
+        "dynamic_7124011": {
+          "label": "Marital status",
+          "value": "",
+          "type": "list",
+          "universal_id": null
+        },
+        "dynamic_7124018": {
+          "label": "City",
+          "value": "",
+          "type": "standard",
+          "universal_id": null
+        },
+        "dynamic_7124042": {
+          "label": "Laptop serial number",
+          "value": "",
+          "type": "standard",
+          "universal_id": null
+        },
+        "dynamic_7124043": {
+          "label": "Trainings",
+          "value": "",
+          "type": "tags",
+          "universal_id": null
+        },
+        "dynamic_7124050": {
+          "label": "Visa expiry date",
+          "value": null,
+          "type": "date",
+          "universal_id": null
+        },
+        "dynamic_7124001": {
+          "label": "Type of health insurance",
+          "value": "",
+          "type": "list",
+          "universal_id": null
+        },
+        "dynamic_7124005": {
+          "label": "BIC",
+          "value": "",
+          "type": "standard",
+          "universal_id": null
+        },
+        "dynamic_7124008": {
+          "label": "Emergency contact phone number",
+          "value": "",
+          "type": "standard",
+          "universal_id": null
+        },
+        "dynamic_7124015": {
+          "label": "Postcode",
+          "value": "",
+          "type": "standard",
+          "universal_id": null
+        },
+        "dynamic_7124045": {
+          "label": "Language Skills",
+          "value": "",
+          "type": "tags",
+          "universal_id": null
+        },
+        "dynamic_7124002": {
+          "label": "Name of health insurance",
+          "value": "",
+          "type": "standard",
+          "universal_id": null
+        },
+        "dynamic_7124012": {
+          "label": "Personal email",
+          "value": "",
+          "type": "standard",
+          "universal_id": null
+        },
+        "dynamic_7124036": {
+          "label": "LinkedIn",
+          "value": "",
+          "type": "link",
+          "universal_id": null
+        },
+        "dynamic_7124046": {
+          "label": "First Aider",
+          "value": "",
+          "type": "list",
+          "universal_id": null
+        },
+        "dynamic_7124022": {
+          "label": "Main or secondary occupation",
+          "value": "",
+          "type": "list",
+          "universal_id": null
+        },
+        "dynamic_7124030": {
+          "label": "Nationality",
+          "value": "",
+          "type": "list",
+          "universal_id": null
+        },
+        "dynamic_7124041": {
+          "label": "Emergency contact relationship to the employee",
+          "value": "",
+          "type": "list",
+          "universal_id": null
+        },
+        "dynamic_7124023": {
+          "label": "Child allowance",
+          "value": "",
+          "type": "list",
+          "universal_id": null
+        },
+        "dynamic_7124038": {
+          "label": "Notice period",
+          "value": "",
+          "type": "standard",
+          "universal_id": null
+        },
+        "dynamic_7124039": {
+          "label": "Occupation type",
+          "value": "",
+          "type": "list",
+          "universal_id": null
+        }
+      }
+    }
+  }
