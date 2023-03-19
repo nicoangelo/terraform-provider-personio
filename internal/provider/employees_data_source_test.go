@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -9,22 +8,19 @@ import (
 	"github.com/jesse0michael/go-rest-assured/assured"
 )
 
+const testAccEmployeesDataSourceConfig = `
+data "personio_employees" "test" {
+}
+`
+
 func TestAccEmployeesDataSource(t *testing.T) {
-	emps, _ := os.ReadFile("../../testdata/all_employees.json")
-	c := assured.NewDefaultClient()
-	c.Given(assured.Call{
+	emps, _ := os.ReadFile("../../test/data/all_employees.json")
+	c := DefaultRestServerWith(assured.Call{
 		Path:       "/company/employees",
 		Method:     "GET",
 		StatusCode: 200,
 		Response:   emps,
 	})
-	c.Given(assured.Call{
-		Path:       "/auth",
-		Method:     "POST",
-		StatusCode: 200,
-		Response:   []byte(`{"success": true, "data": { "token": "ghi" } }`),
-	})
-	fmt.Println("Rest assured running on", c.URL())
 	os.Setenv("PERSONIO_API_URL", c.URL())
 
 	resource.Test(t, resource.TestCase{
@@ -42,8 +38,3 @@ func TestAccEmployeesDataSource(t *testing.T) {
 		},
 	})
 }
-
-const testAccEmployeesDataSourceConfig = `
-data "personio_employees" "test" {
-}
-`
