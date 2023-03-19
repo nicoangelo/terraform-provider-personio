@@ -34,7 +34,7 @@ func TestAccEmployeeDataSource(t *testing.T) {
 		StatusCode: 404,
 	})
 	defer c.Close()
-	os.Setenv("PERSONIO_API_URL", c.URL())
+	t.Setenv("PERSONIO_API_URL", c.URL())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

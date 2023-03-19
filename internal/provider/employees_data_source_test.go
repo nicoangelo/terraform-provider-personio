@@ -22,7 +22,7 @@ func TestAccEmployeesDataSource(t *testing.T) {
 		Response:   emps,
 	})
 	defer c.Close()
-	os.Setenv("PERSONIO_API_URL", c.URL())
+	t.Setenv("PERSONIO_API_URL", c.URL())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
