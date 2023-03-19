@@ -21,6 +21,7 @@ func TestAccEmployeesDataSource(t *testing.T) {
 		StatusCode: 200,
 		Response:   emps,
 	})
+	defer c.Close()
 	os.Setenv("PERSONIO_API_URL", c.URL())
 
 	resource.Test(t, resource.TestCase{
