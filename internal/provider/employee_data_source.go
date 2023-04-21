@@ -63,35 +63,6 @@ Tag attributes are converted to a list of strings.
 - Time attributes are returned in UTC timezone.
 `,
 		Attributes: utils.ReplaceAttribute(employeeAttributes, "id", employeeIdRequired),
-		Blocks: map[string]schema.Block{
-			"phonenumber": schema.SetNestedBlock{
-				Description: "Define attributes of each employee record that are formatted as phone numbers.",
-				MarkdownDescription: `
-The configured dynamic attribute key of each employee record is formatted as phone number,
-so they all look alike.
-
-Under the hood this uses https://github.com/nyaruka/phonenumbers,
-a Go implementation of [Google's libphonenumber](https://github.com/google/libphonenumber).
-
-Limitations:
-- Only supports dynamic attributes to be formatted
-
-This block can be specified multiple times.
-				`,
-				NestedObject: schema.NestedBlockObject{
-					Attributes: map[string]schema.Attribute{
-						"attribute": schema.StringAttribute{
-							Required:    true,
-							Description: "The dynamic attribute key that contains a phone number to format.",
-						},
-						"default_region": schema.StringAttribute{
-							Required:    true,
-							Description: "Default region for the phone number, if not clear from the number.",
-						},
-					},
-				},
-			},
-		},
 	}
 }
 
