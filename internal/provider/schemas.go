@@ -1,8 +1,11 @@
 package provider
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/nicoangelo/terraform-provider-personio/internal/formatter"
 	"github.com/nicoangelo/terraform-provider-personio/internal/utils"
 )
 
@@ -162,4 +165,42 @@ var (
 			Computed:    true,
 		}}
 	employeeAttributes = utils.MergeMaps(basicEmployeeAttributes, employeeRootAttributes)
+
+	blocks = map[string]schema.Block{
+		"format": schema.SetNestedBlock{
+			Description: "Configuration of formatters that are applied to a given employee dynamic attribute",
+			NestedObject: schema.NestedBlockObject{
+				Attributes: map[string]schema.Attribute{
+					"attribute": schema.StringAttribute{
+						Required:    true,
+						Description: "The dynamic attribute key that should be formatted.",
+					},
+					"phonenumber": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"default_region": schema.StringAttribute{
+								Required:    true,
+								Description: "Default region for the phone number, if not clear from the number.",
+							},
+							"format": schema.StringAttribute{
+								Optional: true,
+								Validators: []validator.String{
+									// Validate string value must be "one", "two", or "three"
+									stringvalidator.OneOf([]string{"E164", "INTERNATIONAL", "NATIONAL", "RFC3966"}...),
+								},
+								Description: "Format of the phone number. Defaults to " + formatter.PHONENUMBER_DEFAULT_FORMAT,
+								MarkdownDescription: `
+Can be one of the following values (example is the number of the Google Switzerland office):
+- E164 &#8594; e.g. +41446681800
+- INTERNATIONAL &#8594; e.g. +41 44 668 1800
+- NATIONAL &#8594; e.g. 044 668 1800
+- RFC3966 &#8594; e.g. tel:+41-44-668-1800
+`,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
 )

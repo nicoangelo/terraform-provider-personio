@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/nicoangelo/terraform-provider-personio/internal/adapter"
-	"github.com/nicoangelo/terraform-provider-personio/internal/phonenumber"
+	"github.com/nicoangelo/terraform-provider-personio/internal/formatter"
 	"github.com/nicoangelo/terraform-provider-personio/internal/utils"
 )
 
@@ -28,14 +28,9 @@ type EmployeesDataSource struct {
 
 // EmployeesDataSourceModel describes the data source data model.
 type EmployeesDataSourceModel struct {
-	Employees             []adapter.Employee     `tfsdk:"employees"`
-	Id                    types.String           `tfsdk:"id"`
-	PhoneNumberAttributes []PhoneNumberAttribute `tfsdk:"phonenumber"`
-}
-
-type PhoneNumberAttribute struct {
-	Attribute     string `tfsdk:"attribute"`
-	DefaultRegion string `tfsdk:"default_region"`
+	Employees []adapter.Employee          `tfsdk:"employees"`
+	Id        types.String                `tfsdk:"id"`
+	Formats   []formatter.FormatterConfig `tfsdk:"format"`
 }
 
 func (d *EmployeesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -66,35 +61,7 @@ For more information on limitations and output conversion, see [personio_employe
 				Computed:            true,
 			},
 		},
-		Blocks: map[string]schema.Block{
-			"phonenumber": schema.SetNestedBlock{
-				Description: "Define attributes of each employee record that are formatted as phone numbers.",
-				MarkdownDescription: `
-The configured dynamic attribute key of each employee record is formatted as phone number,
-so they all look alike.
-
-Under the hood this uses https://github.com/nyaruka/phonenumbers,
-a Go implementation of [Google's libphonenumber](https://github.com/google/libphonenumber).
-
-Limitations:
-- Only supports dynamic attributes to be formatted
-
-This block can be specified multiple times.
-				`,
-				NestedObject: schema.NestedBlockObject{
-					Attributes: map[string]schema.Attribute{
-						"attribute": schema.StringAttribute{
-							Required:    true,
-							Description: "The dynamic attribute key that contains a phone number to format.",
-						},
-						"default_region": schema.StringAttribute{
-							Required:    true,
-							Description: "Default region for the phone number, if not clear from the number.",
-						},
-					},
-				},
-			},
-		},
+		Blocks: blocks,
 	}
 }
 
@@ -126,6 +93,9 @@ func (d *EmployeesDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
+	fmts := &formatter.FormatterCollection{}
+	fmts.FromConfig(data.Formats)
+
 	employees, err := d.client.GetEmployees()
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read employees, got error: %s", err))
@@ -133,13 +103,7 @@ func (d *EmployeesDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	for _, e := range employees {
-		for _, pna := range data.PhoneNumberAttributes {
-			attr, ok := e.DynamicAttributes[pna.Attribute]
-			if !ok {
-				continue
-			}
-			e.DynamicAttributes[pna.Attribute] = types.StringValue(phonenumber.ParseAndFormatPhonenumber(attr.ValueString(), pna.DefaultRegion))
-		}
+		fmts.FormatAll(e.DynamicAttributes)
 		data.Employees = append(data.Employees, e)
 	}
 
