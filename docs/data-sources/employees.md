@@ -69,10 +69,6 @@ Optional:
 <a id="nestedatt--employees"></a>
 ### Nested Schema for `employees`
 
-Required:
-
-- `id` (Number) Personio Employee ID
-
 Read-Only:
 
 - `created_at` (String) Creation date of the employee record
@@ -80,6 +76,7 @@ Read-Only:
 - `email` (String) Email address of the employee
 - `first_name` (String) First name
 - `hr_info` (Attributes) HR Information about the employee (see [below for nested schema](#nestedatt--employees--hr_info))
+- `id` (Number) Personio Employee ID
 - `last_modified_at` (String) Last modification date of employee record
 - `last_name` (String) Last name
 - `profile` (Attributes) Public profile attributes of an employee (see [below for nested schema](#nestedatt--employees--profile))

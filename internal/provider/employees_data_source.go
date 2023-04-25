@@ -93,14 +93,14 @@ func (d *EmployeesDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	fmts := &formatter.FormatterCollection{}
-	fmts.FromConfig(data.Formats)
-
 	employees, err := d.client.GetEmployees()
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read employees, got error: %s", err))
 		return
 	}
+
+	fmts := &formatter.FormatterCollection{}
+	fmts.FromConfig(data.Formats)
 
 	for _, e := range employees {
 		fmts.FormatAll(e.DynamicAttributes)

@@ -68,22 +68,62 @@ data "personio_employee" "example" {
 
 - `id` (Number) Personio Employee ID
 
+### Optional
+
+- `format` (Block Set) Configuration of formatters that are applied to a given employee dynamic attribute (see [below for nested schema](#nestedblock--format))
+
 ### Read-Only
+
+- `employee` (Attributes) The requested employee and their attributes. (see [below for nested schema](#nestedatt--employee))
+
+<a id="nestedblock--format"></a>
+### Nested Schema for `format`
+
+Required:
+
+- `attribute` (String) The dynamic attribute key that should be formatted.
+
+Optional:
+
+- `phonenumber` (Attributes) (see [below for nested schema](#nestedatt--format--phonenumber))
+
+<a id="nestedatt--format--phonenumber"></a>
+### Nested Schema for `format.phonenumber`
+
+Required:
+
+- `default_region` (String) Default region for the phone number, if not clear from the number.
+
+Optional:
+
+- `format` (String) Can be one of the following values (example is the number of the Google Switzerland office):
+- E164 &#8594; e.g. +41446681800
+- INTERNATIONAL &#8594; e.g. +41 44 668 1800
+- NATIONAL &#8594; e.g. 044 668 1800
+- RFC3966 &#8594; e.g. tel:+41-44-668-1800
+
+
+
+<a id="nestedatt--employee"></a>
+### Nested Schema for `employee`
+
+Read-Only:
 
 - `created_at` (String) Creation date of the employee record
 - `dynamic_attributes` (Map of String) Additional dynamic attributes of the employee.
 - `email` (String) Email address of the employee
 - `first_name` (String) First name
-- `hr_info` (Attributes) HR Information about the employee (see [below for nested schema](#nestedatt--hr_info))
+- `hr_info` (Attributes) HR Information about the employee (see [below for nested schema](#nestedatt--employee--hr_info))
+- `id` (Number) Personio Employee ID
 - `last_modified_at` (String) Last modification date of employee record
 - `last_name` (String) Last name
-- `profile` (Attributes) Public profile attributes of an employee (see [below for nested schema](#nestedatt--profile))
-- `salary_data` (Attributes) Salary data of the employee (see [below for nested schema](#nestedatt--salary_data))
+- `profile` (Attributes) Public profile attributes of an employee (see [below for nested schema](#nestedatt--employee--profile))
+- `salary_data` (Attributes) Salary data of the employee (see [below for nested schema](#nestedatt--employee--salary_data))
 - `status` (String) Status of the employee (active,...)
 - `tag_attributes` (Map of Set of String) Attributes of the employee that are stored as multi-select from a predefined list.
 
-<a id="nestedatt--hr_info"></a>
-### Nested Schema for `hr_info`
+<a id="nestedatt--employee--hr_info"></a>
+### Nested Schema for `employee.hr_info`
 
 Read-Only:
 
@@ -100,8 +140,8 @@ Read-Only:
 - `weekly_working_hours` (Number) Weekly working hours
 
 
-<a id="nestedatt--profile"></a>
-### Nested Schema for `profile`
+<a id="nestedatt--employee--profile"></a>
+### Nested Schema for `employee.profile`
 
 Read-Only:
 
@@ -109,12 +149,12 @@ Read-Only:
 - `department_id` (Number) Department ID
 - `gender` (String) Gender
 - `subcompany` (String) Subcompany
-- `supervisor` (Attributes) Supervisor of the employee (see [below for nested schema](#nestedatt--profile--supervisor))
+- `supervisor` (Attributes) Supervisor of the employee (see [below for nested schema](#nestedatt--employee--profile--supervisor))
 - `team` (String) Team name
 - `team_id` (Number) Team ID
 
-<a id="nestedatt--profile--supervisor"></a>
-### Nested Schema for `profile.supervisor`
+<a id="nestedatt--employee--profile--supervisor"></a>
+### Nested Schema for `employee.profile.supervisor`
 
 Read-Only:
 
@@ -125,8 +165,8 @@ Read-Only:
 
 
 
-<a id="nestedatt--salary_data"></a>
-### Nested Schema for `salary_data`
+<a id="nestedatt--employee--salary_data"></a>
+### Nested Schema for `employee.salary_data`
 
 Read-Only:
 
