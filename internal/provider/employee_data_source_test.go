@@ -15,6 +15,28 @@ const (
 data "personio_employee" "test" {
 	id = ` + employeeId + `
 }`
+	testAccEmployeeWithFormatE164DataSourceConfig = `
+data "personio_employee" "test_with_format" {
+	id = ` + employeeId + `
+	format {
+		attribute = "dynamic_7124008"
+		phonenumber = {
+			default_region = "AT"
+			format = "E164"
+		}
+	}
+}`
+	testAccEmployeeWithFormatInternationalDataSourceConfig = `
+data "personio_employee" "test_with_format" {
+	id = ` + employeeId + `
+	format {
+		attribute = "dynamic_7124008"
+		phonenumber = {
+			default_region = "AT"
+			format = "INTERNATIONAL"
+		}
+	}
+}`
 	testAccEmployeeNonExistingDataSourceConfig = `
 data "personio_employee" "test" {
 	id = 123
@@ -45,7 +67,19 @@ func TestAccEmployeeDataSource(t *testing.T) {
 			{
 				Config: testAccEmployeeDataSourceConfig,
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.personio_employee.test", "id", employeeId),
+					resource.TestCheckResourceAttr("data.personio_employee.test", "employee.id", employeeId),
+				),
+			},
+			{
+				Config: testAccEmployeeWithFormatE164DataSourceConfig,
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("data.personio_employee.test_with_format", "employee.dynamic_attributes.dynamic_7124008", "+41446681800"),
+				),
+			},
+			{
+				Config: testAccEmployeeWithFormatInternationalDataSourceConfig,
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("data.personio_employee.test_with_format", "employee.dynamic_attributes.dynamic_7124008", "+41 44 668 18 00"),
 				),
 			},
 

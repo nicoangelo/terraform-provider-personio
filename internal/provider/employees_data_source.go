@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/nicoangelo/terraform-provider-personio/internal/adapter"
+	"github.com/nicoangelo/terraform-provider-personio/internal/formatter"
 	"github.com/nicoangelo/terraform-provider-personio/internal/utils"
 )
 
@@ -27,8 +28,9 @@ type EmployeesDataSource struct {
 
 // EmployeesDataSourceModel describes the data source data model.
 type EmployeesDataSourceModel struct {
-	Employees []adapter.Employee `tfsdk:"employees"`
-	Id        types.String       `tfsdk:"id"`
+	Employees []adapter.Employee          `tfsdk:"employees"`
+	Id        types.String                `tfsdk:"id"`
+	Formats   []formatter.FormatterConfig `tfsdk:"format"`
 }
 
 func (d *EmployeesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -59,6 +61,7 @@ For more information on limitations and output conversion, see [personio_employe
 				Computed:            true,
 			},
 		},
+		Blocks: blocks,
 	}
 }
 
@@ -96,7 +99,11 @@ func (d *EmployeesDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
+	fmts := &formatter.FormatterCollection{}
+	fmts.FromConfig(data.Formats)
+
 	for _, e := range employees {
+		fmts.FormatAll(e.DynamicAttributes)
 		data.Employees = append(data.Employees, e)
 	}
 

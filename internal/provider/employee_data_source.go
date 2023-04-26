@@ -6,8 +6,9 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/nicoangelo/terraform-provider-personio/internal/adapter"
-	"github.com/nicoangelo/terraform-provider-personio/internal/utils"
+	"github.com/nicoangelo/terraform-provider-personio/internal/formatter"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces
@@ -25,7 +26,11 @@ type EmployeeDataSource struct {
 }
 
 // EmployeeDataSourceModel describes the data source data model.
-type EmployeeDataSourceModel = *adapter.Employee
+type EmployeeDataSourceModel struct {
+	Employee *adapter.Employee           `tfsdk:"employee"`
+	Id       types.Number                `tfsdk:"id"`
+	Formats  []formatter.FormatterConfig `tfsdk:"format"`
+}
 
 func (d *EmployeeDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_employee"
@@ -62,7 +67,15 @@ Tag attributes are converted to a list of strings.
   different for each tenant. Dynamic attributes on map values are not supported out of the box by Terraform.
 - Time attributes are returned in UTC timezone.
 `,
-		Attributes: utils.ReplaceAttribute(employeeAttributes, "id", employeeIdRequired),
+		Attributes: map[string]schema.Attribute{
+			"employee": schema.SingleNestedAttribute{
+				MarkdownDescription: "The requested employee and their attributes.",
+				Computed:            true,
+				Attributes:          employeeAttributes,
+			},
+			"id": employeeIdRequired,
+		},
+		Blocks: blocks,
 	}
 }
 
@@ -102,7 +115,11 @@ func (d *EmployeeDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
-	data = &employee
+	fmts := &formatter.FormatterCollection{}
+	fmts.FromConfig(data.Formats)
+	fmts.FormatAll(employee.DynamicAttributes)
+
+	data.Employee = &employee
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
