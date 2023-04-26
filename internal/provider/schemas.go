@@ -185,7 +185,6 @@ var (
 							"format": schema.StringAttribute{
 								Optional: true,
 								Validators: []validator.String{
-									// Validate string value must be "one", "two", or "three"
 									stringvalidator.OneOf([]string{"E164", "INTERNATIONAL", "NATIONAL", "RFC3966"}...),
 								},
 								Description: "Format of the phone number. Defaults to " + formatter.PHONENUMBER_DEFAULT_FORMAT,

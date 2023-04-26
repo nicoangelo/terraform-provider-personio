@@ -16,7 +16,7 @@ type PhoneNumberFormatter struct {
 func (pnf *PhoneNumberFormatter) Format(input string) string {
 	pn, err := phonenumbers.Parse(input, pnf.DefaultRegion)
 	if err == nil {
-		return phonenumbers.Format(pn, phonenumbers.INTERNATIONAL)
+		return phonenumbers.Format(pn, pnf.PhoneNumberFormat)
 	}
 	return input
 }

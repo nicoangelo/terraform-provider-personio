@@ -34,6 +34,9 @@ func (fc *FormatterCollection) FromConfig(cfg []FormatterConfig) {
 	}
 }
 
+// FormatAll runs all registered formatters on the dynamic attributes.
+// If a attribute key does not exist, or the value is null or unknown,
+// no changes are made.
 func (fc *FormatterCollection) FormatAll(attrs map[string]types.String) {
 	for _, v := range fc.formatters {
 		attr, ok := attrs[v.attributeKey]
