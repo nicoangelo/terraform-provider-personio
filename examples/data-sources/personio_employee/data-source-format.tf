@@ -6,7 +6,7 @@ data "personio_employee" "example_with_format" {
 
     phonenumber = {
       default_region = "AT"
-      format = "INTERNATIONAL"
+      format         = "INTERNATIONAL"
     }
   }
 }
