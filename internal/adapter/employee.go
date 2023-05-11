@@ -30,7 +30,7 @@ type EmployeeProfile struct {
 	DepartmentId types.Int64  `tfsdk:"department_id"`
 	Team         types.String `tfsdk:"team"`
 	TeamId       types.Int64  `tfsdk:"team_id"`
-	Office		 types.String `tfsdk:"office"`
+	Office       types.String `tfsdk:"office"`
 	Subcompany   types.String `tfsdk:"subcompany"`
 	Supervisor   *Supervisor  `tfsdk:"supervisor"`
 }
