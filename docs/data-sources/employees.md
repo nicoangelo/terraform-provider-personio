@@ -110,6 +110,7 @@ Read-Only:
 - `department` (String) Department name
 - `department_id` (Number) Department ID
 - `gender` (String) Gender
+- `office` (String) Office name
 - `subcompany` (String) Subcompany
 - `supervisor` (Attributes) Supervisor of the employee (see [below for nested schema](#nestedatt--employees--profile--supervisor))
 - `team` (String) Team name
