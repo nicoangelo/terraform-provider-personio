@@ -64,6 +64,10 @@ var (
 			Description: "Subcompany",
 			Computed:    true,
 		},
+		"office": schema.StringAttribute{
+			Description: "Office name",
+			Computed:    true,
+		},
 		"team": schema.StringAttribute{
 			Description: "Team name",
 			Computed:    true,

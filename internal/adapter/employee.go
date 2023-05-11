@@ -30,6 +30,7 @@ type EmployeeProfile struct {
 	DepartmentId types.Int64  `tfsdk:"department_id"`
 	Team         types.String `tfsdk:"team"`
 	TeamId       types.Int64  `tfsdk:"team_id"`
+	Office       types.String `tfsdk:"office"`
 	Subcompany   types.String `tfsdk:"subcompany"`
 	Supervisor   *Supervisor  `tfsdk:"supervisor"`
 }
@@ -40,6 +41,7 @@ func (e EmployeeProfile) AllNull() bool {
 		e.DepartmentId.IsNull() &&
 		e.Team.IsNull() &&
 		e.TeamId.IsNull() &&
+		e.Office.IsNull() &&
 		e.Subcompany.IsNull() &&
 		e.Supervisor.AllNull()
 }
@@ -161,6 +163,7 @@ func convertHrData(attrs map[string]personio.Attribute) *EmployeeHrData {
 func convertProfile(attrs map[string]personio.Attribute) *EmployeeProfile {
 	p := &EmployeeProfile{
 		Gender:       convertAttrToString(attrs["gender"]),
+		Office:       convertAnyAttrToString(attrs["office"]),
 		Subcompany:   convertAttrToString(attrs["subcompany"]),
 		Department:   convertMapItemToString(attrs["department"], "name"),
 		DepartmentId: convertMapItemToInt(attrs["department"], "id"),
