@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2023-05-25
+
 ### Changed
 
-- Add office paramter to employee profile
+- Add office parameter to employee profile
 
 ## [0.2.0] - 2023-04-26
 
