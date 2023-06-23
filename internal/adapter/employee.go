@@ -87,7 +87,7 @@ func (e EmployeeSalaryData) AllNull() bool {
 }
 
 type Supervisor struct {
-	Id        types.Int64  `tfsdk:"id"`
+	Id        types.Number `tfsdk:"id"`
 	Email     types.String `tfsdk:"email"`
 	FirstName types.String `tfsdk:"first_name"`
 	LastName  types.String `tfsdk:"last_name"`
@@ -182,7 +182,7 @@ func convertSupervisor(v personio.Attribute) *Supervisor {
 		return nil
 	}
 	return &Supervisor{
-		Id:        convertNestedMapItemToInt(v, "id"),
+		Id:        convertNestedMapItemToNumber(v, "id"),
 		Email:     convertNestedMapItemToString(v, "email"),
 		FirstName: convertNestedMapItemToString(v, "first_name"),
 		LastName:  convertNestedMapItemToString(v, "last_name"),

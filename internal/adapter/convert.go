@@ -64,7 +64,7 @@ func convertAttrToString(v personio.Attribute) types.String {
 }
 
 // convertAttrToNumber converts an integer API value
-// to a Terraform Int64 value. If the value is null, types.Int64Null is returned.
+// to a Terraform Number value. If the value is null, types.NumberNull is returned.
 func convertAttrToNumber(v personio.Attribute) types.Number {
 	if v.Value == nil {
 		return types.NumberNull()
@@ -144,17 +144,17 @@ func convertNestedMapItemToString(v personio.Attribute, itemKey string) types.St
 	return types.StringNull()
 }
 
-// convertNestedMapItemToInt converts a specific attribute of a nested map API value (e.g. supervisor)
-// to a Terraform number value. If the value is null, types.Float64Null is returned.
-func convertNestedMapItemToInt(v personio.Attribute, itemKey string) types.Int64 {
+// convertNestedMapItemToNumber converts a specific attribute of a nested map API value (e.g. supervisor)
+// to a Terraform number value. If the value is null, types.NumberNull is returned.
+func convertNestedMapItemToNumber(v personio.Attribute, itemKey string) types.Number {
 	if v.Value == nil {
-		return types.Int64Null()
+		return types.NumberNull()
 	}
 	mapVal := v.GetMapValue()[itemKey].(map[string]interface{})
 	// nested numbers are stored as float
 	floatVal, ok := mapVal["value"].(float64)
 	if ok {
-		return types.Int64Value(int64(floatVal))
+		return types.NumberValue(big.NewFloat(floatVal))
 	}
-	return types.Int64Null()
+	return types.NumberNull()
 }
