@@ -3,7 +3,6 @@ package adapter
 import (
 	"fmt"
 	"math/big"
-	"strings"
 	"time"
 
 	personio "github.com/giantswarm/personio-go/v1"
@@ -44,15 +43,11 @@ func convertTagsToStrings(v personio.Attribute) (res []types.String) {
 	if v.Value == nil {
 		return []types.String{}
 	}
-	strValue, ok := v.Value.(string)
-	if ok {
-		res = make([]types.String, 0)
-		for _, v := range strings.Split(strValue, ",") {
-			res = append(res, types.StringValue(v))
-		}
-		return res
+	res = make([]types.String, 0)
+	for _, v := range v.GetTagValues() {
+		res = append(res, types.StringValue(v))
 	}
-	return []types.String{}
+	return res
 }
 
 // convertAttrToString converts any standard, multiline, link, list API value
