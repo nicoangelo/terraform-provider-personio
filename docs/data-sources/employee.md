@@ -174,5 +174,3 @@ Read-Only:
 - `fix_salary` (Number) Fixed salary amount
 - `fix_salary_interval` (String) Fixed salary interval
 - `hourly_salary` (Number) Hourly salary amount
-
-
