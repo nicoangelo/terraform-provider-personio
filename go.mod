@@ -12,7 +12,7 @@ require (
 	github.com/hashicorp/terraform-plugin-go v0.16.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.26.1
 	github.com/jesse0michael/go-rest-assured v1.0.1
-	github.com/nyaruka/phonenumbers v1.1.7
+	github.com/nyaruka/phonenumbers v1.1.8
 )
 
 require (
