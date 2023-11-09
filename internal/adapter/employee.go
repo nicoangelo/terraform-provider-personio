@@ -136,7 +136,7 @@ func convertSalaryData(attrs map[string]personio.Attribute) *EmployeeSalaryData 
 		HourlySalary:      convertAttrToFloat(attrs["hourly_salary"]),
 	}
 	if sd.AllNull() {
-		return nil
+		return &EmployeeSalaryData{}
 	}
 	return sd
 }
@@ -155,7 +155,7 @@ func convertHrData(attrs map[string]personio.Attribute) *EmployeeHrData {
 		VacationDayBalance: convertAttrToFloat(attrs["vacation_day_balance"]),
 		WeeklyWorkingHours: convertAttrToFloat(attrs["weekly_working_hours"])}
 	if hr.AllNull() {
-		return nil
+		return &EmployeeHrData{}
 	}
 	return hr
 }
@@ -172,14 +172,14 @@ func convertProfile(attrs map[string]personio.Attribute) *EmployeeProfile {
 		Supervisor:   convertSupervisor(attrs["supervisor"]),
 	}
 	if p.AllNull() {
-		return nil
+		return &EmployeeProfile{}
 	}
 	return p
 }
 
 func convertSupervisor(v personio.Attribute) *Supervisor {
 	if v.Value == nil {
-		return nil
+		return &Supervisor{}
 	}
 	return &Supervisor{
 		Id:        convertNestedMapItemToNumber(v, "id"),
