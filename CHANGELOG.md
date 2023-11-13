@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2023-11-13
+
+### BREAKING CHANGES
+
+- Do not return nil when all employee attributes are empty
+
 ## [0.3.0] - 2023-05-25
 
 ### Changed
