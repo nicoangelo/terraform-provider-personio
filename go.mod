@@ -1,6 +1,6 @@
 module github.com/nicoangelo/terraform-provider-personio
 
-go 1.18
+go 1.21
 
 // replace github.com/giantswarm/personio-go => /Users/na/repos/personio-go
 
