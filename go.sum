@@ -176,8 +176,8 @@ github.com/mitchellh/mapstructure v1.5.0/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RR
 github.com/mitchellh/reflectwalk v1.0.0/go.mod h1:mSTlrgnPZtwu0c4WaC2kGObEpuNDbx0jmZXqmk4esnw=
 github.com/mitchellh/reflectwalk v1.0.2 h1:G2LzWKi524PWgd3mLHV8Y5k7s6XUvT0Gef6zxSIeXaQ=
 github.com/mitchellh/reflectwalk v1.0.2/go.mod h1:mSTlrgnPZtwu0c4WaC2kGObEpuNDbx0jmZXqmk4esnw=
-github.com/nyaruka/phonenumbers v1.3.0 h1:IFyyJfF2Elg8xGKFghWrRXzb6qAHk+Q3uPqmIgS20JQ=
-github.com/nyaruka/phonenumbers v1.3.0/go.mod h1:4jyKp/BFUokLbCHyoZag+T3S1KezFVoEKtgnbpzItC4=
+github.com/nyaruka/phonenumbers v1.3.1 h1:QcPRnL8hhZeSS6mB0p/Rlv7ma5ASmcgF33YLY0g0A8k=
+github.com/nyaruka/phonenumbers v1.3.1/go.mod h1:4jyKp/BFUokLbCHyoZag+T3S1KezFVoEKtgnbpzItC4=
 github.com/oklog/run v1.1.0 h1:GEenZ1cK0+q0+wsJew9qUg/DyD8k3JzYsZAi5gYi2mA=
 github.com/oklog/run v1.1.0/go.mod h1:sVPdnTZT1zYwAJeCMu2Th4T21pA3FPOQRfWjQlk7DVU=
 github.com/pborman/uuid v0.0.0-20160209185913-a97ce2ca70fa h1:l8VQbMdmwFH37kOOaWQ/cw24/u8AuBz5lUym13Wcu0Y=
