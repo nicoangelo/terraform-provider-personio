@@ -12,7 +12,7 @@ require (
 	github.com/hashicorp/terraform-plugin-go v0.20.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.31.0
 	github.com/jesse0michael/go-rest-assured v1.0.1
-	github.com/nyaruka/phonenumbers v1.3.0
+	github.com/nyaruka/phonenumbers v1.3.4
 )
 
 require (
@@ -87,6 +87,6 @@ require (
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231212172506-995d672761c0 // indirect
 	google.golang.org/grpc v1.60.1 // indirect
-	google.golang.org/protobuf v1.32.0 // indirect
+	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 )
