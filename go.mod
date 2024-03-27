@@ -5,7 +5,7 @@ go 1.21
 // replace github.com/giantswarm/personio-go => /Users/na/repos/personio-go
 
 require (
-	github.com/giantswarm/personio-go v0.3.0
+	github.com/giantswarm/personio-go v0.4.0
 	github.com/hashicorp/terraform-plugin-docs v0.18.0
 	github.com/hashicorp/terraform-plugin-framework v1.6.1
 	github.com/hashicorp/terraform-plugin-framework-validators v0.12.0
