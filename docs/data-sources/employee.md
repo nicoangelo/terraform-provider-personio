@@ -13,11 +13,7 @@ description: |-
   Dynamic attributes can be configured per tenant, and may have different types. All of them are converted to a
   string representation in Terraform.
   Currently supported Personio API data types with their conversions are
-  * integer/decimal -> number
-  * date -> RFC3339 formatted string in UTC timezone
-  * links -> string
-  * standard -> string
-  * multiline -> string
+  integer/decimal -> numberdate -> RFC3339 formatted string in UTC timezonelinks -> stringstandard -> stringmultiline -> string
   Tag attributes are converted to a list of strings.
   Limitations
   All dynamic employee attributes are converted to strings. This is due to employee attributes being
@@ -39,11 +35,11 @@ its value will be `null`. See attributes described as "preset"
 Dynamic attributes can be configured per tenant, and may have different types. All of them are converted to a
 string representation in Terraform.
 Currently supported Personio API data types with their conversions are
-* integer/decimal -> number
-* date -> RFC3339 formatted string in UTC timezone
-* links -> string
-* standard -> string
-* multiline -> string
+- integer/decimal -> number
+- date -> RFC3339 formatted string in UTC timezone
+- links -> string
+- standard -> string
+- multiline -> string
 
 Tag attributes are converted to a list of strings.
 
