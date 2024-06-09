@@ -32,14 +32,24 @@ func (p *PersonioAdapter) GetEmployees() (employees []Employee, err error) {
 		return employees, err
 	}
 	for _, v := range pe {
-		employees = append(employees, NewEmployee(v))
+		employees = append(employees, FromPersonioEmployee(v))
 	}
 	return employees, nil
 }
+
 func (p *PersonioAdapter) GetEmployee(id int64) (employee Employee, err error) {
 	pe, err := p.Client.GetEmployee(id)
 	if err != nil {
 		return employee, err
 	}
-	return NewEmployee(pe), nil
+	return FromPersonioEmployee(pe), nil
+}
+
+func (p *PersonioAdapter) CreateEmployee(e *Employee) (id int64, err error) {
+	pe := ToPersonioCreateEmployee(e)
+	id, err = p.Client.CreateEmployee(pe)
+	if err != nil {
+		return -1, err
+	}
+	return id, nil
 }

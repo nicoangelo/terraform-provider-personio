@@ -2,7 +2,7 @@ module github.com/nicoangelo/terraform-provider-personio
 
 go 1.21
 
-// replace github.com/giantswarm/personio-go => /Users/na/repos/personio-go
+replace github.com/giantswarm/personio-go => /Users/na/repos/personio-go
 
 require (
 	github.com/giantswarm/personio-go v0.3.0

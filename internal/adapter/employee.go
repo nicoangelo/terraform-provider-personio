@@ -62,7 +62,9 @@ type Supervisor struct {
 	LastName  types.String `tfsdk:"last_name"`
 }
 
-func NewEmployee(pe *personio.Employee) (e Employee) {
+// FromPersonioEmployee converts an employee from the Personio library struct
+// to the struct used within the Terraform provider.
+func FromPersonioEmployee(pe *personio.Employee) (e Employee) {
 	e.Id = convertAttrToNumber(pe.Attributes["id"])
 	e.Email = convertAttrToString(pe.Attributes["email"])
 	e.FirstName = convertAttrToString(pe.Attributes["first_name"])
@@ -89,6 +91,27 @@ func NewEmployee(pe *personio.Employee) (e Employee) {
 
 	}
 	return e
+}
+
+// ToPersonioEmployee converts an employee from the Terraform provider struct
+// to the struct used within the Personio library for creating an employee.
+// This is a LOSSY conversion, as the Personio API does not support
+// to set all attributes when creating/updating an employee.
+func ToPersonioCreateEmployee(e *Employee) *personio.EmployeeCreateRequest {
+	return &personio.EmployeeCreateRequest{
+		Employee: personio.EmployeeCreateAttributes{
+			Email: e.Email.ValueString(),
+		},
+	}
+}
+
+// ToPersonioUpdateEmployee converts an employee from the Terraform provider struct
+// to the struct used within the Personio library for updating an employee.
+// This is a LOSSY conversion, as the Personio API does not support
+// to set all attributes when creating/updating an employee.
+// Updating an email address is also not supported.
+func ToPersonioUpdateEmployee(e *Employee) *personio.EmployeeUpdateRequest {
+	return &personio.EmployeeUpdateRequest{}
 }
 
 func convertSalaryData(attrs map[string]personio.Attribute) *EmployeeSalaryData {
