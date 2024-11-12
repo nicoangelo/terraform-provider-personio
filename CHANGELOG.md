@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2024-11-12
+
+### Changed
+
+- Upgraded to latest personio-go library that supports the enforced paged employee responses from the Personio API (https://developer.personio.de/changelog/pagination-enforcement-v1-employees-api)
+
 ## [0.4.0] - 2023-11-13
 
 ### BREAKING CHANGES
